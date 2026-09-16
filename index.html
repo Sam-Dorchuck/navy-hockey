@@ -182,7 +182,11 @@ section{padding:clamp(3.5rem,8vw,6rem) 0;border-top:1px solid var(--line)}
   grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
   gap:1px;background:var(--line);border:1px solid var(--line);
 }
-.player{position:relative;background:var(--navy-800);aspect-ratio:3/4;overflow:hidden}
+.player{position:relative;background:var(--navy-800);aspect-ratio:3/4;overflow:hidden;display:block;color:inherit;text-decoration:none}
+.player:hover{text-decoration:none}
+.player:hover img{filter:grayscale(0) contrast(1.05)}
+.player::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 0 var(--gold);transition:box-shadow .15s}
+.player:hover::after{box-shadow:inset 0 0 0 2px var(--gold)}
 .player img{width:100%;height:100%;object-fit:cover;filter:grayscale(.35) contrast(1.05)}
 .player.no-photo img{display:none}
 .p-num{
@@ -251,6 +255,34 @@ section{padding:clamp(3.5rem,8vw,6rem) 0;border-top:1px solid var(--line)}
   .thumbs button{width:92px}
 }
 
+/* ---------- merch ---------- */
+/* Merch uses the roster's .wall grid verbatim. The only override is a
+   slightly larger minimum track, since there are ~12 items, not 25. */
+.wall-merch{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+.item{position:relative;background:var(--navy-800);display:block;color:inherit;text-decoration:none}
+.item:hover{text-decoration:none}
+.item::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 0 var(--gold);transition:box-shadow .15s;pointer-events:none}
+.item:hover::after{box-shadow:inset 0 0 0 2px var(--gold)}
+.item .shot{position:relative;aspect-ratio:1/1;background:var(--navy-700);overflow:hidden}
+.item .shot img{width:100%;height:100%;object-fit:cover}
+.item.no-photo .shot img{display:none}
+.item .shot::after{
+  content:"NAVY HOCKEY";position:absolute;inset:0;display:none;
+  align-items:center;justify-content:center;
+  font-family:"Barlow Condensed",sans-serif;font-size:.85rem;letter-spacing:.16em;
+  color:rgba(200,162,51,.45);
+}
+.item.no-photo .shot::after{display:flex}
+.item-body{padding:.65rem .75rem .8rem;display:flex;align-items:baseline;gap:.5rem}
+.item-name{font-family:"Barlow Condensed",sans-serif;font-size:1.15rem;line-height:1.15}
+.item-price{margin-left:auto;font-family:"Barlow Condensed",sans-serif;font-size:1.3rem;color:var(--gold)}
+.order{
+  margin-top:2.5rem;border:1px solid var(--gold);padding:1.75rem;
+  display:grid;grid-template-columns:1.2fr .8fr;gap:2rem;align-items:center;
+}
+@media (max-width:760px){.order{grid-template-columns:1fr;gap:1.2rem}}
+.order h3{font-size:1.6rem;text-transform:uppercase}
+
 /* ---------- support ---------- */
 .support{background:var(--navy-800)}
 .give{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(2rem,5vw,4rem);align-items:start}
@@ -292,6 +324,48 @@ section{padding:clamp(3.5rem,8vw,6rem) 0;border-top:1px solid var(--line)}
 .contact .who{font-family:"Barlow Condensed",sans-serif;font-size:1.5rem;font-weight:600;margin-top:.1rem}
 .contact .detail{font-size:.95rem;color:var(--rink)}
 
+/* ---------- detail sheet ---------- */
+.sheet{position:fixed;inset:0;z-index:80;display:none}
+.sheet[open]{display:block}
+.sheet-scrim{position:absolute;inset:0;background:rgba(3,9,18,.82);backdrop-filter:blur(3px)}
+.sheet-panel{
+  position:absolute;inset:auto 0 0 0;max-height:92vh;overflow:auto;
+  background:var(--navy-900);border-top:3px solid var(--gold);
+}
+@media (min-width:880px){
+  .sheet-panel{
+    inset:50% auto auto 50%;transform:translate(-50%,-50%);
+    width:min(980px,92vw);max-height:88vh;border:1px solid var(--gold);border-top-width:3px;
+  }
+}
+.sheet-close{
+  position:sticky;top:0;float:right;margin:.6rem .6rem 0 0;z-index:2;
+  width:40px;height:40px;background:var(--navy-800);border:1px solid var(--line);
+  color:var(--ice);font-size:1.3rem;line-height:1;cursor:pointer;
+}
+.sheet-close:hover{background:var(--gold);color:var(--navy-900);border-color:var(--gold)}
+.sheet-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(1.5rem,4vw,2.5rem);padding:clamp(1.25rem,3vw,2rem)}
+@media (max-width:720px){.sheet-body{grid-template-columns:1fr;gap:1.25rem}}
+.sheet-shot{position:relative;background:var(--navy-700);border:1px solid var(--line);overflow:hidden}
+.sheet-shot.portrait{aspect-ratio:3/4}
+.sheet-shot.square{aspect-ratio:1/1}
+.sheet-shot img{width:100%;height:100%;object-fit:cover}
+.sheet-shot.empty img{display:none}
+.sheet-shot .ghost{
+  position:absolute;inset:0;display:none;align-items:center;justify-content:center;
+  font-family:"Barlow Condensed",sans-serif;font-size:7rem;color:rgba(200,162,51,.5);
+}
+.sheet-shot.empty .ghost{display:flex}
+.sheet-eyebrow{font-family:"Barlow Condensed",sans-serif;color:var(--gold);font-size:1.1rem;letter-spacing:.06em}
+.sheet-title{font-family:"Barlow Condensed",sans-serif;font-size:clamp(2rem,5vw,3rem);text-transform:uppercase;line-height:1.02;margin:.1rem 0 0}
+.sheet-sub{color:var(--rink);margin:.4rem 0 0}
+.facts{margin:1.5rem 0 0;border-top:1px solid var(--line)}
+.fact{display:flex;gap:1rem;padding:.6rem 0;border-bottom:1px solid var(--line);font-size:.95rem}
+.fact dt{color:var(--slate);min-width:8.5rem;flex:none;margin:0}
+.fact dd{margin:0}
+.sheet-note{margin-top:1.4rem;color:var(--rink);line-height:1.65}
+.sheet-empty{margin-top:1.4rem;color:var(--slate);font-style:italic}
+
 /* ---------- footer ---------- */
 footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
 .foot{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:2rem}
@@ -313,6 +387,7 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
       <a href="#schedule">Schedule</a>
       <a href="#roster">Roster</a>
       <a href="#photos">Photos</a>
+      <a href="#merch">Merch</a>
       <a href="#support">Support</a>
       <a href="#recruiting">Future Mids</a>
     </nav>
@@ -396,6 +471,24 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
     </div>
   </section>
 
+  <!-- ============ MERCH ============ -->
+  <section id="merch">
+    <div class="shell">
+      <div class="sec-head">
+        <h2>Team store</h2>
+        <p>Navy Hockey gear for players, families, and fans. Sizes and stock vary.</p>
+      </div>
+      <div class="wall wall-merch" id="merch-grid"></div>
+      <div class="order">
+        <div>
+          <h3>How to order</h3>
+          <p style="color:var(--rink);margin:.6rem 0 0">Email Kelly Teuschl with the item, size, color, and quantity you want, and she'll confirm availability and arrange payment and pickup.</p>
+        </div>
+        <div><a class="btn" href="mailto:kellyteuschl@gmail.com?subject=Navy%20Hockey%20merchandise%20order">Email Kelly to order</a></div>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ SUPPORT ============ -->
   <section id="support" class="support">
     <div class="shell">
@@ -450,6 +543,14 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
 
 </main>
 
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+  <div class="sheet-scrim" data-close></div>
+  <div class="sheet-panel">
+    <button class="sheet-close" aria-label="Close">&#10005;</button>
+    <div class="sheet-body" id="sheet-body"></div>
+  </div>
+</div>
+
 <footer>
   <div class="shell">
     <div class="foot">
@@ -474,6 +575,7 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
           <li><a href="mailto:dorchuck@usna.edu">Capt. Dorchuck, O-Rep</a></li>
           <li><a href="mailto:TREASURER_EMAIL_HERE">Sponsorship &amp; giving</a></li>
           <li><a href="#recruiting">Prospective players</a></li>
+          <li><a href="mailto:kellyteuschl@gmail.com">Merchandise orders</a></li>
         </ul>
       </div>
       <div>
@@ -537,9 +639,28 @@ const SCHEDULE = {
     {date:"2027-02-19", opp:"William Paterson", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM"},
     {date:"2027-02-20", opp:"Villanova", home:false, loc:"Hatfield Ice Arena, Hatfield, PA", time:"6:00 PM"},
   ],
-  /* Men's D3 and Women's D2 schedules not yet posted. Add games in the same
-     shape as above and they appear under their tab. */
-  md3:[],
+  /* Men's D3 (B team), 2026-27. */
+  md3:[
+    {date:"2026-10-03", opp:"High Point", home:true, loc:"McMullen Arena, Annapolis", time:"6:00 PM"},
+    {date:"2026-10-04", opp:"High Point", home:true, loc:"McMullen Arena, Annapolis", time:"2:00 PM"},
+    {date:"2026-10-09", opp:"Loyola", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM"},
+    {date:"2026-10-16", opp:"Stevenson", home:true, loc:"McMullen Arena, Annapolis", time:"8:30 PM"},
+    {date:"2026-10-17", opp:"Johns Hopkins", home:true, loc:"McMullen Arena, Annapolis", time:"6:00 PM"},
+    {date:"2026-10-23", opp:"George Mason", home:false, loc:"Williams Ice Center, Fairfax, VA", time:"8:10 PM"},
+    {date:"2026-10-25", opp:"UMBC", home:true, loc:"McMullen Arena, Annapolis", time:"11:00 AM"},
+    {date:"2026-11-06", opp:"UMBC", home:false, loc:"Gardens Ice House, Laurel, MD", time:"8:40 PM"},
+    {date:"2026-11-13", opp:"Catholic", home:false, loc:"Wheaton Ice Arena, Wheaton, MD", time:"9:10 PM"},
+    {date:"2026-11-14", opp:"Catholic", home:true, loc:"McMullen Arena, Annapolis", time:"8:30 PM"},
+    {date:"2026-11-20", opp:"Stevenson", home:false, loc:"Reisterstown Sportsplex, Reisterstown, MD", time:"8:00 PM"},
+    {date:"2026-12-05", opp:"Maryland", home:false, loc:"Bowie Ice Arena, Bowie, MD", time:"9:20 PM"},
+    {date:"2027-01-15", opp:"George Mason", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM"},
+    {date:"2027-01-22", opp:"West Chester", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM"},
+    {date:"2027-01-23", opp:"George Washington", home:true, loc:"McMullen Arena, Annapolis", time:"5:30 PM"},
+    {date:"2027-01-30", opp:"Maryland", home:true, loc:"McMullen Arena, Annapolis", time:"8:30 PM"},
+    {date:"2027-02-05", opp:"JMU", home:false, loc:"Haymarket Ice Plex, Haymarket, VA", time:"10:30 PM"},
+    {date:"2027-02-06", opp:"JMU", home:false, loc:"Haymarket Ice Plex, Haymarket, VA", time:"6:00 PM"},
+  ],
+  /* Women's D2 schedule not yet posted. */
   wd2:[]
 };
 
@@ -548,7 +669,18 @@ const SCHEDULE = {
    falls back to a gold sweater number, which looks intentional. */
 const ROSTER = {
   /* Men's D1, 2026-27. photo: file in img/roster/ — a missing file falls back
-     to a gold sweater number, so you can add headshots as they come in. */
+     to a gold sweater number, so you can add headshots as they come in.
+
+     OPTIONAL FIELDS — add any of these to a player and they appear on their
+     detail page. Leave them out and the page just shows less:
+       co:"14th Co."          company on the Yard
+       major:"Cyber Ops"      course of study
+       prev:"Boston Jr. Bruins"   junior/high school team
+       shoots:"L"             shoots left or right
+       bio:"Two sentences about the player."
+     Example:
+       {num:3, name:"Mason Rudin", ..., co:"9th Co.", major:"Systems Engineering",
+        prev:"Minnesota Blue Ox", shoots:"R", bio:"Back-to-back hat tricks..."},  */
   md1:[
     {num:1, name:"Aiden Surran", pos:"G", yr:"'30", home:"Hampden, ME", ht:"5'10\"", wt:"170 lb", photo:"img/roster/surran.jpg"},
     {num:2, name:"Doug Carr", pos:"F", yr:"'28", home:"Barnstable, MA", ht:"5'9\"", wt:"165 lb", photo:"img/roster/carr.jpg"},
@@ -593,12 +725,13 @@ const STAFF = [
    automatically, so you can list them before they exist. Landscape
    (16:9-ish) photos work best. */
 const GALLERY = [
-  /* Rewritten by update-gallery.py. Captions are preserved when
-     you re-run it, so edit them freely below. */
-  {src:"img/gallery/2024-09-20-nmih-vs-umd-31-x2-large.jpg", cap:""},
-  {src:"img/gallery/2024-09-20-nmih-vs-umd-34-x2-large.jpg", cap:""},
-  {src:"img/gallery/2024-09-20-nmih-vs-umd-73-x2-large.jpg", cap:""},
-  {src:"img/gallery/2024-09-20-nmih-vs-umd-8-x2-large.jpg", cap:""},
+  /* Captions are hand-written. update-gallery.py keys them to the
+     FILENAME, so re-running it preserves every line below — but
+     renaming a file loses its caption. */
+  {src:"img/gallery/2024-09-20-nmih-vs-umd-31-x2-large.jpg", cap:"D1 Hockey is a Physical Sport -- Keep on Rollin'!"},
+  {src:"img/gallery/2024-09-20-nmih-vs-umd-34-x2-large.jpg", cap:"Save!"},
+  {src:"img/gallery/2024-09-20-nmih-vs-umd-73-x2-large.jpg", cap:"Navy Goes up 2-0 Against UMD!"},
+  {src:"img/gallery/2024-09-20-nmih-vs-umd-8-x2-large.jpg", cap:"Mason Rudin puts the MIDN up 3-0!"},
   {src:"img/gallery/2024-09-20-nmih-vs-umd-87-x2-large.jpg", cap:""},
   {src:"img/gallery/2024-09-20-nmih-vs-umd-9-x2-large.jpg", cap:""},
   {src:"img/gallery/2024-09-27-nmih-vs-uri-112-x2-large.jpg", cap:""},
@@ -616,9 +749,29 @@ const GALLERY = [
   {src:"img/gallery/navy-hockey-2023-2024-large.jpg", cap:""},
 ];
 
+/* --- MERCH ---------------------------------------------------
+   photo is optional: drop a square image in img/merch/ and point to it.
+   Items without a photo show a plain navy tile, which looks deliberate. */
+/* OPTIONAL per item: desc:"..." , sizes:"S-XXL", colors:"Navy, gray",
+   material:"80/20 cotton-poly". Anything you add shows on the item page. */
+const MERCH = [
+  {name:"UA Hoodie",                price:"$55", photo:"img/merch/ua-hoodie.jpg"},
+  {name:"Full-Zip Sweatshirt",      price:"$55", photo:"img/merch/full-zip.jpg"},
+  {name:"UA Lightweight Hoodie",    price:"$50", photo:"img/merch/ua-lightweight-hoodie.jpg"},
+  {name:"UA Quarter-Zip",           price:"$50", photo:"img/merch/ua-quarter-zip.jpg"},
+  {name:"Champion Crewneck",        price:"$40", photo:"img/merch/champion-crewneck.jpg"},
+  {name:"UA Long Sleeve T-Shirt",   price:"$35", photo:"img/merch/ua-long-sleeve.jpg"},
+  {name:"UA Short Sleeve T-Shirt",  price:"$30", photo:"img/merch/ua-short-sleeve.jpg"},
+  {name:"Blanket",                  price:"$75", photo:"img/merch/blanket.jpg"},
+  {name:"Hat",                      price:"$25", photo:"img/merch/hat.jpg"},
+  {name:"Beanie",                   price:"$25", photo:"img/merch/beanie.jpg"},
+  {name:"Mittens",                  price:"$20", photo:"img/merch/mittens.jpg"},
+  {name:"Youth Hoodie (navy or gray)", price:"$25", photo:"img/merch/youth-hoodie.jpg"}
+];
+
 const CONTACTS = [
-  {role:"Officer Representative", who:"Capt. Samuel Dorchuck, USMC", detail:"dorchuck@usna.edu", note:"First stop for prospective players and parents."},
-  {role:"Head Coach, Men's D1",   who:"Kevin Rooney", detail:"COACH_EMAIL_HERE", note:"On-ice questions and tryout information."},
+  {role:"Officer Representative", who:"Capt. Samuel Dorchuck, USMC", detail:"dorchuck@usna.edu", note:"First stop for prospective players and parents. Send game film here."},
+  {role:"Head Coach, Men's D1",   who:"NAME HERE", detail:"COACH_EMAIL_HERE", note:"On-ice questions and tryout information."},
   {role:"Head Coach, Women's D2", who:"NAME HERE", detail:"COACH_EMAIL_HERE", note:"Women's program recruiting."},
   {role:"Admissions",             who:"USNA Admissions", detail:"http://www.usna.edu/Admissions/Steps-for-Admission/index.php", note:"Start your candidate file here. Admissions decides; hockey does not."}
 ];
@@ -711,7 +864,9 @@ function renderRoster(teamId){
   const mount = document.getElementById("wall");
   mount.innerHTML = "";
   (ROSTER[teamId]||[]).forEach(p=>{
-    const card = el("div","player");
+    const card = el("a","player");
+    card.href = "#player-" + slugify(p.name);
+    card.setAttribute("aria-label", `${p.name}, number ${p.num}`);
     const img = el("img");
     img.src = p.photo || "";
     img.alt = `${p.name}, #${p.num}`;
@@ -828,6 +983,29 @@ function renderRoster(teamId){
   });
 })();
 
+/* merch */
+(function renderMerch(){
+  const mount = document.getElementById("merch-grid");   // NOT "merch" — that id belongs to the <section>
+  MERCH.forEach(m=>{
+    const card = el("a","item");
+    card.href = "#item-" + slugify(m.name);
+    const shot = el("div","shot");
+    const img  = el("img");
+    img.src = m.photo || "";
+    img.alt = m.name;
+    img.loading = "lazy";
+    img.addEventListener("error", ()=>card.classList.add("no-photo"));
+    if(!m.photo) card.classList.add("no-photo");
+    shot.appendChild(img);
+    card.appendChild(shot);
+    const body = el("div","item-body");
+    body.appendChild(el("div","item-name", m.name));
+    body.appendChild(el("div","item-price", m.price));
+    card.appendChild(body);
+    mount.appendChild(card);
+  });
+})();
+
 /* contacts */
 (function renderContacts(){
   const mount = document.getElementById("contacts");
@@ -869,6 +1047,146 @@ function renderRoster(teamId){
   });
 })();
 
+/* ---------- detail sheets (players and merch) ----------
+   Driven by the URL hash, so #player-rudin is a real shareable link and the
+   browser back button closes the panel. */
+function slugify(s){
+  return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+}
+
+(function sheets(){
+  const sheet = document.getElementById("sheet");
+  const body  = document.getElementById("sheet-body");
+  const closeBtn = sheet.querySelector(".sheet-close");
+  let lastFocus = null;
+
+  const allPlayers = () => Object.values(ROSTER).flat();
+
+  function fact(dl, label, value){
+    if(!value) return;
+    const row = el("div","fact");
+    row.appendChild(el("dt",null,label));
+    row.appendChild(el("dd",null,value));
+    dl.appendChild(row);
+  }
+
+  function renderPlayer(p){
+    const left = el("div");
+    const shot = el("div","sheet-shot portrait");
+    const img = el("img");
+    img.src = p.photo || ""; img.alt = p.name;
+    img.addEventListener("error", ()=>shot.classList.add("empty"));
+    if(!p.photo) shot.classList.add("empty");
+    shot.appendChild(img);
+    shot.appendChild(el("div","ghost", String(p.num)));
+    left.appendChild(shot);
+
+    const right = el("div");
+    right.appendChild(el("div","sheet-eyebrow", `#${p.num} · ${p.pos==="G"?"Goaltender":p.pos==="D"?"Defense":"Forward"}`));
+    const t = el("h2","sheet-title", p.name); t.id = "sheet-title";
+    right.appendChild(t);
+    right.appendChild(el("div","sheet-sub", `Class of ${p.yr} · ${p.home}`));
+
+    const dl = el("dl","facts");
+    fact(dl,"Position", p.pos==="G"?"Goaltender":p.pos==="D"?"Defense":"Forward");
+    fact(dl,"Height", p.ht);
+    fact(dl,"Weight", p.wt);
+    fact(dl,"Shoots", p.shoots);
+    fact(dl,"Hometown", p.home);
+    fact(dl,"Class", "20"+String(p.yr).replace("'",""));
+    fact(dl,"Company", p.co);
+    fact(dl,"Major", p.major);
+    fact(dl,"Previous team", p.prev);
+    right.appendChild(dl);
+
+    if(p.bio) right.appendChild(el("p","sheet-note", p.bio));
+    else right.appendChild(el("p","sheet-empty","More on this player coming soon."));
+
+    body.innerHTML = "";
+    body.appendChild(left); body.appendChild(right);
+  }
+
+  function renderItem(m){
+    const left = el("div");
+    const shot = el("div","sheet-shot square");
+    const img = el("img");
+    img.src = m.photo || ""; img.alt = m.name;
+    img.addEventListener("error", ()=>shot.classList.add("empty"));
+    if(!m.photo) shot.classList.add("empty");
+    shot.appendChild(img);
+    shot.appendChild(el("div","ghost","N"));
+    left.appendChild(shot);
+
+    const right = el("div");
+    right.appendChild(el("div","sheet-eyebrow","Team store"));
+    const t = el("h2","sheet-title", m.name); t.id = "sheet-title";
+    right.appendChild(t);
+    right.appendChild(el("div","sheet-sub", m.price));
+
+    const dl = el("dl","facts");
+    fact(dl,"Sizes", m.sizes);
+    fact(dl,"Colors", m.colors);
+    fact(dl,"Material", m.material);
+    right.appendChild(dl);
+
+    if(m.desc) right.appendChild(el("p","sheet-note", m.desc));
+    else right.appendChild(el("p","sheet-empty","Sizes and details available on request."));
+
+    const cta = el("p",null,
+      `<a class="btn" href="mailto:kellyteuschl@gmail.com?subject=${encodeURIComponent("Navy Hockey order: " + m.name)}">Email Kelly to order</a>`);
+    right.appendChild(cta);
+
+    body.innerHTML = "";
+    body.appendChild(left); body.appendChild(right);
+  }
+
+  function open(){
+    lastFocus = document.activeElement;
+    sheet.setAttribute("open","");
+    document.body.style.overflow = "hidden";
+    closeBtn.focus();
+  }
+  function close(){
+    sheet.removeAttribute("open");
+    document.body.style.overflow = "";
+    if(lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  function dismiss(){
+    if(location.hash.startsWith("#player-") || location.hash.startsWith("#item-")){
+      history.pushState("", document.title, location.pathname + location.search);
+    }
+    close();
+  }
+
+  function route(){
+    const hash = location.hash;
+    if(hash.startsWith("#player-")){
+      const p = allPlayers().find(x=>slugify(x.name) === hash.slice(8));
+      if(p){ renderPlayer(p); open(); return; }
+    }
+    if(hash.startsWith("#item-")){
+      const m = MERCH.find(x=>slugify(x.name) === hash.slice(6));
+      if(m){ renderItem(m); open(); return; }
+    }
+    close();
+  }
+
+  closeBtn.addEventListener("click", dismiss);
+  sheet.querySelector("[data-close]").addEventListener("click", dismiss);
+  document.addEventListener("keydown", e=>{
+    if(e.key === "Escape" && sheet.hasAttribute("open")) dismiss();
+    if(e.key === "Tab" && sheet.hasAttribute("open")){
+      const f = sheet.querySelectorAll("button, a[href]");
+      if(!f.length) return;
+      const first = f[0], last = f[f.length-1];
+      if(e.shiftKey && document.activeElement === first){ last.focus(); e.preventDefault(); }
+      else if(!e.shiftKey && document.activeElement === last){ first.focus(); e.preventDefault(); }
+    }
+  });
+  window.addEventListener("hashchange", route);
+  window.__routeSheet = route;   // called once the roster/merch have rendered
+})();
+
 /* mobile nav */
 (function nav(){
   const btn = document.querySelector(".navtoggle");
@@ -886,6 +1204,9 @@ function renderRoster(teamId){
 
 buildSwitcher("sched-teams", renderSchedule);
 buildSwitcher("roster-teams", renderRoster);
+
+/* honour a deep link like #player-rudin on first load */
+if(window.__routeSheet) window.__routeSheet();
 </script>
 </body>
 </html>
