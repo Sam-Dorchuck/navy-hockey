@@ -105,6 +105,11 @@ img{display:block;max-width:100%}
 .rule{height:3px;width:76px;background:var(--gold);margin:1.75rem 0 0}
 
 /* three-team breakdown */
+.arena{margin-top:1.6rem;padding-left:1.1rem;border-left:2px solid var(--gold);max-width:64ch}
+.arena-name{font-family:"Barlow Condensed",sans-serif;font-size:1.5rem;font-weight:600;line-height:1.1}
+.arena address{font-style:normal;color:var(--gold-lt);font-size:.95rem;margin-top:.15rem}
+.arena p{margin:.6rem 0 0;color:var(--rink);font-size:.95rem;line-height:1.5}
+.arena p a{color:var(--gold-lt);border-bottom:1px solid rgba(232,193,90,.4)}
 .squads{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem;margin-top:2rem;max-width:74ch}
 .squad{border-top:1px solid var(--line);padding-top:.8rem}
 .squad h3{font-size:1.35rem;color:var(--gold)}
@@ -204,6 +209,13 @@ section{padding:clamp(3.5rem,8vw,6rem) 0;border-top:1px solid var(--line)}
 .p-meta{font-size:.82rem;color:var(--rink);margin-top:.15rem}
 .p-home{font-size:.8rem;color:var(--slate)}
 .p-stats{font-size:.78rem;color:var(--slate);margin-top:.1rem}
+.p-letter{
+  position:absolute;top:.5rem;right:.5rem;z-index:2;
+  width:1.6rem;height:1.6rem;line-height:1.5rem;text-align:center;
+  border:1px solid var(--gold);color:var(--gold);
+  font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:.95rem;
+  background:rgba(8,23,43,.6);
+}
 .staff{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.5rem;margin-top:2.5rem;padding-top:2rem;border-top:1px solid var(--line)}
 .staff h3{font-size:1.35rem}
 .staff .role{color:var(--gold);font-size:.9rem}
@@ -401,6 +413,11 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
       <div>
         <h1>Official home of Navy Hockey</h1>
         <div class="rule"></div>
+        <div class="arena">
+          <div class="arena-name">John J. McMullen Hockey Arena</div>
+          <address>Brigade Sports Complex &middot; 64 Greenbury Point Road, Annapolis, MD 21402</address>
+          <p>An Olympic-size sheet opened in 2007, named for Dr. John J. McMullen of the legendary <a href="https://www.amazon.com/Annapolis-Goes-War-Naval-Academy/dp/0197752675">Class of 1940</a>. He took a master's degree from MIT and a doctorate from ETH Zurich, founded a naval architecture firm, and later owned the Houston Astros and the New Jersey Devils, who won the Stanley Cup twice under him. Every practice and home game happens here.</p>
+        </div>
         <div class="squads">
           <div class="squad">
             <h3>Men's D1</h3>
@@ -499,18 +516,18 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
         <div>
           <p class="lede">Club hockey isn't funded like varsity. Ice time, officials, league dues, travel, and equipment come out of player dues and the generosity of alumni, parents, and fans. Every dollar goes to the teams.</p>
           <div class="tiers">
-            <div class="tier"><div class="tier-amt">$50</div><div class="tier-what">Officiating for one home game</div></div>
-            <div class="tier"><div class="tier-amt">$150</div><div class="tier-what">A set of game socks and practice jerseys</div></div>
-            <div class="tier"><div class="tier-amt">$500</div><div class="tier-what">One hour of ice at McMullen</div></div>
-            <div class="tier"><div class="tier-amt">$2,500</div><div class="tier-what">A full conference road trip for one team</div></div>
+            <div class="tier"><div class="tier-amt">$50</div><div class="tier-what">A meal for three players on the road</div></div>
+            <div class="tier"><div class="tier-amt">$150</div><div class="tier-what">One night in a hotel room for four players on a road trip</div></div>
+            <div class="tier"><div class="tier-amt">$500</div><div class="tier-what">Officiating for one full home game</div></div>
+            <div class="tier"><div class="tier-amt">$2,000</div><div class="tier-what">The bus for a team road trip</div></div>
           </div>
         </div>
         <div class="givebox">
-          <h3>Give to Navy Hockey</h3>
-          <p style="color:var(--rink);margin:.6rem 0 0">Gifts are made through the Naval Academy Foundation and designated to Navy Club Hockey. Corporate matching is accepted.</p>
-          <a class="btn" href="DONATE_URL_HERE">Make a gift</a>
+          <h3>Friends of Navy Hockey</h3>
+          <p style="color:var(--rink);margin:.6rem 0 0">The most direct way to support the program is a gift to Friends of Navy Hockey, which goes straight to the teams. Corporate matching is accepted.</p>
+          <a class="btn" href="DONATE_URL_HERE">Give to Friends of Navy Hockey</a>
           <a class="btn btn-ghost" href="mailto:TREASURER_EMAIL_HERE" style="margin-left:.5rem">Ask about sponsorship</a>
-          <p class="fineprint">Prefer to mail a check? Make it out to the Naval Academy Foundation with "Navy Club Hockey" in the memo line and send it to the address in the footer.</p>
+          <p class="fineprint">Prefer to mail a check? Make it out to Friends of Navy Hockey and send it to the address in the footer.</p>
         </div>
       </div>
     </div>
@@ -529,7 +546,7 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
           <a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLScSPgu6CQGKRSx2eJ7vW8SPgFjrA7MGF13YuzMT2U0wfr9VUg/viewform?usp=sf_link">Fill out the player questionnaire</a>
           <ol class="steps">
             <li><strong>Complete the questionnaire</strong>This is how we start tracking you. If you filled it out and haven't heard back from a team representative, email the Officer Representative directly.</li>
-            <li><strong>Send your game film</strong>Recent video or links go to Capt. Dorchuck at <a href="mailto:dorchuck@usna.edu">dorchuck@usna.edu</a>.</li>
+            <li><strong>Send your game film</strong>Recent video or links go to Capt Dorchuck at <a href="mailto:dorchuck@usna.edu">dorchuck@usna.edu</a>.</li>
             <li><strong>Apply to the Naval Academy</strong>Work the <a href="http://www.usna.edu/Admissions/Steps-for-Admission/index.php">Steps for Admission</a> and pursue a nomination. Rising seniors should also look at <a href="http://www.usna.edu/Admissions/Programs/NASS/index.php">Summer Seminar</a>.</li>
             <li><strong>Come see a game</strong>Practices and home games are at McMullen Ice Arena in the Brigade Sports Complex. Tell us you're coming and we'll connect you with players.</li>
           </ol>
@@ -572,7 +589,7 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
       <div>
         <h4>Contact</h4>
         <ul>
-          <li><a href="mailto:dorchuck@usna.edu">Capt. Dorchuck, O-Rep</a></li>
+          <li><a href="mailto:dorchuck@usna.edu">Capt Dorchuck, O-Rep</a></li>
           <li><a href="mailto:TREASURER_EMAIL_HERE">Sponsorship &amp; giving</a></li>
           <li><a href="#recruiting">Prospective players</a></li>
           <li><a href="mailto:kellyteuschl@gmail.com">Merchandise orders</a></li>
@@ -708,16 +725,40 @@ const ROSTER = {
     {num:30, name:"Bailen Smargiassi", pos:"G", yr:"'28", home:"Breinigsville, PA", ht:"5'10\"", wt:"170 lb", photo:"img/roster/smargiassi.jpg"},
     {num:31, name:"Gavin Biehl", pos:"G", yr:"'29", home:"Point Mugu, CA", ht:"6'2\"", wt:"195 lb", photo:"img/roster/biehl.jpg"},
   ],
-  /* Men's D3 and Women's D2 rosters not yet posted. */
-  md3:[],
+  /* Men's D3 (B team), 2026-27. letter:"C" or "A" marks captains.
+     Hometown, height and weight not supplied — those rows simply don't render. */
+  md3:[
+    {num:1, name:"Luke Anderson", pos:"G", yr:"'28", photo:"img/roster/anderson.jpg"},
+    {num:2, name:"Michael Huntington", pos:"F", yr:"'27", photo:"img/roster/huntington.jpg"},
+    {num:3, name:"Luke Pucel", pos:"D", yr:"'27", letter:"C", photo:"img/roster/pucel.jpg"},
+    {num:4, name:"Angel Kariff Gomez", pos:"D", yr:"'30", photo:"img/roster/gomez.jpg"},
+    {num:5, name:"Nicholas Simons", pos:"D", yr:"'29", photo:"img/roster/simons.jpg"},
+    {num:6, name:"Brennan Johnson", pos:"D", yr:"'28", photo:"img/roster/johnson.jpg"},
+    {num:7, name:"Richard Dyke", pos:"F", yr:"'30", photo:"img/roster/dyke.jpg"},
+    {num:8, name:"Logan Burger", pos:"D", yr:"'27", photo:"img/roster/burger.jpg"},
+    {num:9, name:"Harrison Kennedy", pos:"F", yr:"'28", photo:"img/roster/kennedy.jpg"},
+    {num:10, name:"Jack Miller", pos:"F", yr:"'30", photo:"img/roster/miller.jpg"},
+    {num:11, name:"Jack Grace", pos:"F", yr:"'29", photo:"img/roster/grace.jpg"},
+    {num:12, name:"Luke Eward", pos:"F", yr:"'29", photo:"img/roster/eward.jpg"},
+    {num:13, name:"Gavin McCain", pos:"F", yr:"'30", photo:"img/roster/mccain.jpg"},
+    {num:14, name:"Connor Haines", pos:"D", yr:"'30", photo:"img/roster/haines.jpg"},
+    {num:15, name:"Robert Morris", pos:"F", yr:"'27", letter:"A", photo:"img/roster/morris.jpg"},
+    {num:16, name:"Matthew Kim", pos:"D", yr:"'28", photo:"img/roster/kim.jpg"},
+    {num:17, name:"Eliot Martin", pos:"F", yr:"'30", photo:"img/roster/martin.jpg"},
+    {num:21, name:"Chad Graham", pos:"F", yr:"'27", letter:"A", photo:"img/roster/graham.jpg"},
+    {num:23, name:"Samuel Gerber", pos:"F", yr:"'28", photo:"img/roster/gerber.jpg"},
+    {num:25, name:"Alexander Piil", pos:"F", yr:"'27", photo:"img/roster/piil.jpg"},
+    {num:27, name:"Matthew Marinello", pos:"F", yr:"'27", letter:"A", photo:"img/roster/marinello.jpg"},
+    {num:31, name:"Eric Gorski", pos:"G", yr:"'27", photo:"img/roster/gorski.jpg"},
+  ],
   wd2:[]
 };
 
 const STAFF = [
-  {name:"NAME HERE",                  role:"Head Coach, Men's D1",   detail:"COACH_EMAIL_HERE"},
+  {name:"Kevin Rooney",               role:"Head Coach, Men's D1",   detail:"kevinbrooney@aol.com"},
   {name:"NAME HERE",                  role:"Head Coach, Men's D3",   detail:"COACH_EMAIL_HERE"},
   {name:"NAME HERE",                  role:"Head Coach, Women's D2", detail:"COACH_EMAIL_HERE"},
-  {name:"Capt. Samuel Dorchuck, USMC", role:"Officer Representative", detail:"dorchuck@usna.edu"}
+  {name:"Capt Samuel Dorchuck, USMC", role:"Officer Representative", detail:"dorchuck@usna.edu"}
 ];
 
 /* --- GALLERY -------------------------------------------------
@@ -732,21 +773,21 @@ const GALLERY = [
   {src:"img/gallery/2024-09-20-nmih-vs-umd-34-x2-large.jpg", cap:"Save!"},
   {src:"img/gallery/2024-09-20-nmih-vs-umd-73-x2-large.jpg", cap:"Navy Goes up 2-0 Against UMD!"},
   {src:"img/gallery/2024-09-20-nmih-vs-umd-8-x2-large.jpg", cap:"Mason Rudin puts the MIDN up 3-0!"},
-  {src:"img/gallery/2024-09-20-nmih-vs-umd-87-x2-large.jpg", cap:""},
-  {src:"img/gallery/2024-09-20-nmih-vs-umd-9-x2-large.jpg", cap:""},
-  {src:"img/gallery/2024-09-27-nmih-vs-uri-112-x2-large.jpg", cap:""},
-  {src:"img/gallery/2024-09-27-nmih-vs-uri-35-x2-large.jpg", cap:""},
-  {src:"img/gallery/2024-09-27-nmih-vs-uri-68-x2-large.jpg", cap:""},
-  {src:"img/gallery/2024-11-02-nmih-temple-10-x2-large.jpg", cap:""},
-  {src:"img/gallery/2024-11-02-nmih-temple-11-large.jpg", cap:""},
-  {src:"img/gallery/2024-11-02-nmih-temple-4-x3-large-1.jpg", cap:""},
-  {src:"img/gallery/2024-11-02-nmih-temple-4-x3-large.jpg", cap:""},
-  {src:"img/gallery/2024-11-02-nmih-temple-7-x2-large.jpg", cap:""},
-  {src:"img/gallery/big-crowd-navy-hockey-large.jpg", cap:""},
-  {src:"img/gallery/crab-pot-large.jpg", cap:""},
-  {src:"img/gallery/crabpot2024.jpg", cap:""},
+  {src:"img/gallery/2024-09-20-nmih-vs-umd-87-x2-large.jpg", cap:"Celebrating Mason Rudin's Hat Trick against UMD!"},
+  {src:"img/gallery/2024-09-20-nmih-vs-umd-9-x2-large.jpg", cap:"A 10th goal to cap a dominant MIDN performance!"},
+  {src:"img/gallery/2024-09-27-nmih-vs-uri-112-x2-large.jpg", cap:"Stay out of our House!"},
+  {src:"img/gallery/2024-09-27-nmih-vs-uri-35-x2-large.jpg", cap:"It isn't always hard work!"},
+  {src:"img/gallery/2024-09-27-nmih-vs-uri-68-x2-large.jpg", cap:"Another Mason Rudin Hat Trick!"},
+  {src:"img/gallery/2024-11-02-nmih-temple-10-x2-large.jpg", cap:"Mason Rudin with another Goal!"},
+  {src:"img/gallery/2024-11-02-nmih-temple-11-large.jpg", cap:"Alright boys how many times do I have to say it -- just pass the puck to Mason Rudin"},
+  {src:"img/gallery/2024-11-02-nmih-temple-4-x3-large-1.jpg", cap:"Mason Rudin hops into goal to save the final shot in the penalty shootout"},
+  {src:"img/gallery/2024-11-02-nmih-temple-4-x3-large.jpg", cap:"Might as well include it again"},
+  {src:"img/gallery/2024-11-02-nmih-temple-7-x2-large.jpg", cap:"Ian Cady makes a smart decision and passes to Mason Rudin"},
+  {src:"img/gallery/big-crowd-navy-hockey-large.jpg", cap:"Mason Rudin quite literally beats up a grown man in public"},
+  {src:"img/gallery/crab-pot-large.jpg", cap:"Can you spot Mason Rudin?"},
+  {src:"img/gallery/crabpot2024.jpg", cap:"Can you spot Mason Rudin part 2?"},
   {src:"img/gallery/cunningham-brothers-large.jpg", cap:"Navy Hockey Brotherhood: Cunningham Brothers"},
-  {src:"img/gallery/navy-hockey-2023-2024-large.jpg", cap:""},
+  {src:"img/gallery/navy-hockey-2023-2024-large.jpg", cap:"Mason Rudin isn't in this picture so I think I'm gonna delte it fr fr"},
 ];
 
 /* --- MERCH ---------------------------------------------------
@@ -770,8 +811,8 @@ const MERCH = [
 ];
 
 const CONTACTS = [
-  {role:"Officer Representative", who:"Capt. Samuel Dorchuck, USMC", detail:"dorchuck@usna.edu", note:"First stop for prospective players and parents. Send game film here."},
-  {role:"Head Coach, Men's D1",   who:"NAME HERE", detail:"COACH_EMAIL_HERE", note:"On-ice questions and tryout information."},
+  {role:"Officer Representative", who:"Capt Samuel Dorchuck, USMC", detail:"dorchuck@usna.edu", note:"First stop for prospective players and parents. Send game film here."},
+  {role:"Head Coach, Men's D1",   who:"Kevin Rooney", detail:"kevinbrooney@aol.com", note:"On-ice questions and tryout information."},
   {role:"Head Coach, Women's D2", who:"NAME HERE", detail:"COACH_EMAIL_HERE", note:"Women's program recruiting."},
   {role:"Admissions",             who:"USNA Admissions", detail:"http://www.usna.edu/Admissions/Steps-for-Admission/index.php", note:"Start your candidate file here. Admissions decides; hockey does not."}
 ];
@@ -875,11 +916,12 @@ function renderRoster(teamId){
     if(!p.photo) card.classList.add("no-photo");
     card.appendChild(img);
     card.appendChild(el("div","p-num", String(p.num)));
+    if(p.letter) card.appendChild(el("div","p-letter", p.letter));
     const info = el("div","p-info");
     info.appendChild(el("div","p-name", p.name));
     info.appendChild(el("div","p-meta", `${p.pos} · Class of ${p.yr}`));
-    info.appendChild(el("div","p-home", p.home));
-    if(p.ht) info.appendChild(el("div","p-stats", `${p.ht} · ${p.wt}`));
+    if(p.home) info.appendChild(el("div","p-home", p.home));
+    if(p.ht)   info.appendChild(el("div","p-stats", `${p.ht}${p.wt ? " · " + p.wt : ""}`));
     card.appendChild(info);
     mount.appendChild(card);
   });
@@ -1082,13 +1124,17 @@ function slugify(s){
     left.appendChild(shot);
 
     const right = el("div");
-    right.appendChild(el("div","sheet-eyebrow", `#${p.num} · ${p.pos==="G"?"Goaltender":p.pos==="D"?"Defense":"Forward"}`));
+    const teamOf = Object.keys(ROSTER).find(k => ROSTER[k].includes(p));
+    const teamName = (TEAMS.find(t=>t.id===teamOf)||{}).name || "";
+    right.appendChild(el("div","sheet-eyebrow",
+      `#${p.num} · ${p.pos==="G"?"Goaltender":p.pos==="D"?"Defense":"Forward"}${teamName ? " · " + teamName : ""}`));
     const t = el("h2","sheet-title", p.name); t.id = "sheet-title";
     right.appendChild(t);
-    right.appendChild(el("div","sheet-sub", `Class of ${p.yr} · ${p.home}`));
+    right.appendChild(el("div","sheet-sub", `Class of ${p.yr}${p.home ? " · " + p.home : ""}`));
 
     const dl = el("dl","facts");
     fact(dl,"Position", p.pos==="G"?"Goaltender":p.pos==="D"?"Defense":"Forward");
+    fact(dl,"Role", p.letter==="C" ? "Captain" : p.letter==="A" ? "Alternate captain" : "");
     fact(dl,"Height", p.ht);
     fact(dl,"Weight", p.wt);
     fact(dl,"Shoots", p.shoots);
