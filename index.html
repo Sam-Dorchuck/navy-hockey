@@ -130,6 +130,14 @@ img{display:block;max-width:100%}
 }
 .nextgame .shell{display:flex;flex-wrap:wrap;align-items:center;gap:1.5rem 2.6rem;padding:1.25rem 0 1.5rem}
 .ng-label{font-family:"Barlow Condensed",sans-serif;font-size:1.05rem;color:var(--gold);letter-spacing:.06em}
+.live-dot{
+  display:inline-block;width:.55rem;height:.55rem;border-radius:50%;
+  background:#E5484D;margin-left:.15rem;vertical-align:.05rem;
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.live-dot{animation:none}}
+.ng-cta{display:flex;flex-wrap:wrap;gap:.5rem}
 .ng-main{font-family:"Barlow Condensed",sans-serif;font-size:clamp(1.6rem,4vw,2.3rem);font-weight:600}
 .ng-meta{color:var(--rink);font-size:.98rem}
 .ng-cta{margin-left:auto}
@@ -601,6 +609,7 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
           <li><a href="https://www.instagram.com/navymenshockey/">@navymenshockey — Men's D1</a></li>
           <li><a href="https://www.instagram.com/usnahockey/">@usnahockey — Men's D3</a></li>
           <li><a href="https://www.instagram.com/navywomenshockey/">@navywomenshockey — Women's D2</a></li>
+          <li><a href="https://www.youtube.com/channel/UCepE3NuI5iJhDDKrepIc34A">YouTube — game streams</a></li>
           <li><a href="FACEBOOK_URL_HERE">Facebook</a></li>
         </ul>
       </div>
@@ -876,28 +885,71 @@ function renderSchedule(teamId){
   });
 }
 
-/* next home game strip */
+/* next home game strip.
+   Recomputes on load and every minute, so a page left open rolls over on its
+   own: a game disappears once it's finished, and a "watch live" link appears
+   in the window around puck drop. */
+const LIVESTREAM = "https://www.youtube.com/channel/UCepE3NuI5iJhDDKrepIc34A";
+const PREGAME_HOURS = 4;    // stream link goes live this long before faceoff
+const GAME_HOURS    = 3;    // a game is considered over this long after faceoff
+
 (function nextGame(){
-  const today = new Date(); today.setHours(0,0,0,0);
-  let best = null;
-  Object.keys(SCHEDULE).forEach(k=>{
-    SCHEDULE[k].forEach(g=>{
-      if(!g.home || g.result) return;
-      const d = new Date(g.date+"T12:00:00");
-      if(d >= today && (!best || d < best.d)) best = {...g, d, team:k};
-    });
-  });
   const main = document.getElementById("ng-main");
   const meta = document.getElementById("ng-meta");
-  if(!best){
-    main.textContent = "Season schedule coming soon";
-    meta.textContent = "Check back for home dates at McMullen Arena.";
-    return;
+  const label = document.querySelector(".ng-label");
+  const cta  = document.querySelector(".ng-cta");
+
+  function faceoff(g){
+    const d = new Date(g.date + "T12:00:00");
+    const m = /(\d{1,2}):(\d{2})\s*(AM|PM)/i.exec(g.time || "");
+    if(!m) { d.setHours(19,0,0,0); return d; }          // TBD -> assume evening
+    let hr = parseInt(m[1],10) % 12;
+    if(/PM/i.test(m[3])) hr += 12;
+    d.setHours(hr, parseInt(m[2],10), 0, 0);
+    return d;
   }
-  const t = TEAMS.find(x=>x.id===best.team);
-  const f = fmt(best.date);
-  main.textContent = `Navy ${t.name} vs. ${best.opp}`;
-  meta.textContent = `${f.d.toLocaleDateString("en-US",{weekday:"long", month:"long", day:"numeric"})} · ${best.time} · ${best.loc}`;
+
+  function paint(){
+    const now = Date.now();
+    let best = null;
+
+    Object.keys(SCHEDULE).forEach(k=>{
+      SCHEDULE[k].forEach(g=>{
+        if(!g.home || g.result) return;                 // away games and finals skipped
+        const start = faceoff(g);
+        if(now > start.getTime() + GAME_HOURS*3600e3) return;   // already over
+        if(!best || start < best.start) best = {...g, start, team:k};
+      });
+    });
+
+    if(!best){
+      label.textContent = "Season complete";
+      main.textContent  = "Schedule for next season coming soon";
+      meta.textContent  = "";
+      cta.innerHTML     = '<a class="btn" href="#schedule">See full schedule</a>';
+      return;
+    }
+
+    const t = TEAMS.find(x=>x.id===best.team);
+    const start = best.start.getTime();
+    const live = now >= start - PREGAME_HOURS*3600e3;
+
+    label.innerHTML = live
+      ? 'Watching now <span class="live-dot"></span>'
+      : "Next home game";
+    main.textContent = `Navy ${t.name} vs. ${best.opp}`;
+    meta.textContent = best.start.toLocaleDateString("en-US",
+        {weekday:"long", month:"long", day:"numeric"})
+      + ` · ${best.time} · ${best.loc}`;
+
+    cta.innerHTML = live
+      ? `<a class="btn" href="${LIVESTREAM}">Watch the livestream</a>`
+      : `<a class="btn" href="#schedule">See full schedule</a>
+         <a class="btn btn-ghost" href="${LIVESTREAM}" style="margin-left:.5rem">Livestream</a>`;
+  }
+
+  paint();
+  setInterval(paint, 60000);
 })();
 
 /* roster */
