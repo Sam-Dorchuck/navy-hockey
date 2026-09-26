@@ -61,7 +61,9 @@ def main():
 
     rows = []
     for f in files:
-        cap = kept.get(f) or pretty(f)
+        # "f in kept" not "kept.get(f) or ...": an intentionally blank
+        # caption must survive a re-run rather than being regenerated.
+        cap = kept[f] if f in kept else pretty(f)
         cap = cap.replace('"', "'")
         rows.append(f'  {{src:"{GALLERY_DIR}/{f}", cap:"{cap}"}},')
 

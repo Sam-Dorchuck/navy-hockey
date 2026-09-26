@@ -424,7 +424,7 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
         <div class="arena">
           <div class="arena-name">John J. McMullen Hockey Arena</div>
           <address>Brigade Sports Complex &middot; 64 Greenbury Point Road, Annapolis, MD 21402</address>
-          <p>An Olympic-size sheet opened in 2007, named for Dr. John J. McMullen, graduate of the legendary <a href="https://www.amazon.com/Annapolis-Goes-War-Naval-Academy/dp/0197752675">USNA Class of 1940</a>. He took a master's degree from MIT and a doctorate from ETH Zurich, founded a naval architecture firm, and later owned the Houston Astros and the New Jersey Devils, who won the Stanley Cup twice under him. Every practice and home game happens here.</p>
+          <p>An Olympic-size sheet opened in 2007, named for Dr. John J. McMullen of the legendary <a href="https://www.amazon.com/Annapolis-Goes-War-Naval-Academy/dp/0197752675">Class of 1940</a>. He took a master's degree from MIT and a doctorate from ETH Zurich, founded a naval architecture firm, and later owned the Houston Astros and the New Jersey Devils, who won the Stanley Cup twice under him. Every practice and home game happens here.</p>
         </div>
         <div class="squads">
           <div class="squad">
@@ -636,7 +636,7 @@ const SCHEDULE = {
   /* 2026-27 season. Add result:{w:true, score:"4-2"} to a game once played
      and the row switches from a start time to a W/L line automatically. */
   md1:[
-    {date:"2026-09-25", opp:"Pittsburgh", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM"},
+    {date:"2026-09-25", opp:"Pittsburgh", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM", result:{w:false, score:"2-3"}},
     {date:"2026-09-26", opp:"Pittsburgh", home:true, loc:"McMullen Arena, Annapolis", time:"5:30 PM"},
     {date:"2026-10-02", opp:"Delaware", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM"},
     {date:"2026-10-03", opp:"Delaware", home:false, loc:"Fred Rust Arena, Newark, DE", time:"8:00 PM"},
@@ -775,9 +775,10 @@ const STAFF = [
    automatically, so you can list them before they exist. Landscape
    (16:9-ish) photos work best. */
 const GALLERY = [
-  /* Captions are hand-written. update-gallery.py keys them to the
-     FILENAME, so re-running it preserves every line below — but
-     renaming a file loses its caption. */
+  /* Captions are intentionally blank. Fill any cap:"" with text and it
+     appears over the photo; leave it empty and only the counter shows.
+     update-gallery.py keys captions to the FILENAME, so re-running it
+     preserves whatever you write here. */
   {src:"img/gallery/2024-09-20-nmih-vs-umd-31-x2-large.jpg", cap:""},
   {src:"img/gallery/2024-09-20-nmih-vs-umd-34-x2-large.jpg", cap:""},
   {src:"img/gallery/2024-09-20-nmih-vs-umd-73-x2-large.jpg", cap:""},
@@ -1017,7 +1018,7 @@ function renderRoster(teamId){
     mount.className = "carousel";
     mount.innerHTML =
       '<div class="stage">' +
-        shots.map((g,i)=>`<img src="${g.src}" alt="${g.cap}" class="${i?"":"on"}">`).join("") +
+        shots.map((g,i)=>`<img src="${g.src}" alt="${g.cap || "Navy Hockey"}" class="${i?"":"on"}">`).join("") +
         '<div class="cap"><div class="cap-text"></div><div class="cap-count"></div></div>' +
         '<button class="arrow prev" aria-label="Previous photo">&#10094;</button>' +
         '<button class="arrow next" aria-label="Next photo">&#10095;</button>' +
@@ -1036,7 +1037,7 @@ function renderRoster(teamId){
       i = (n + shots.length) % shots.length;
       imgs.forEach((im,k)=>im.classList.toggle("on", k===i));
       thumbs.forEach((t,k)=>t.setAttribute("aria-current", k===i ? "true" : "false"));
-      text.textContent  = shots[i].cap;
+      text.textContent  = shots[i].cap || "";
       count.textContent = (i+1) + " / " + shots.length;
     }
 
