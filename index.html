@@ -294,6 +294,20 @@ section{padding:clamp(3.5rem,8vw,6rem) 0;border-top:1px solid var(--line)}
 }
 .item.no-photo .shot::after{display:flex}
 .item-body{padding:.65rem .75rem .8rem;display:flex;align-items:baseline;gap:.5rem}
+.item.unavailable .shot img{opacity:.42;filter:grayscale(.5)}
+.item.unavailable .item-price{color:var(--slate)}
+.ribbon{
+  position:absolute;left:0;right:0;bottom:0;z-index:2;
+  padding:.3rem .5rem;text-align:center;
+  background:rgba(8,23,43,.88);border-top:1px solid var(--gold);
+  font-family:"Barlow Condensed",sans-serif;font-size:.9rem;letter-spacing:.1em;
+  color:var(--gold);text-transform:uppercase;
+}
+.stock-note{
+  margin:1rem 0 0;padding:.5rem .8rem;display:inline-block;
+  border:1px solid var(--gold);color:var(--gold);
+  font-family:"Barlow Condensed",sans-serif;font-size:1.05rem;letter-spacing:.04em;
+}
 .item-name{font-family:"Barlow Condensed",sans-serif;font-size:1.15rem;line-height:1.15}
 .item-price{margin-left:auto;font-family:"Barlow Condensed",sans-serif;font-size:1.3rem;color:var(--gold)}
 .order{
@@ -637,9 +651,9 @@ const SCHEDULE = {
      and the row switches from a start time to a W/L line automatically. */
   md1:[
     {date:"2026-09-25", opp:"Pittsburgh", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM", result:{w:false, score:"2-3"}},
-    {date:"2026-09-26", opp:"Pittsburgh", home:true, loc:"McMullen Arena, Annapolis", time:"5:30 PM"},
-    {date:"2026-10-02", opp:"Delaware", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM"},
-    {date:"2026-10-03", opp:"Delaware", home:false, loc:"Fred Rust Arena, Newark, DE", time:"8:00 PM"},
+    {date:"2026-09-26", opp:"Pittsburgh", home:true, loc:"McMullen Arena, Annapolis", time:"5:30 PM", result:{w:false, score:"1-7"}},
+    {date:"2026-10-02", opp:"Delaware", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM", result:{w:false, score:"1-2"}},
+    {date:"2026-10-03", opp:"Delaware", home:false, loc:"Fred Rust Arena, Newark, DE", time:"8:00 PM", result:{w:true, score:"6-3"}},
     {date:"2026-10-09", opp:"NYU", home:false, loc:"Sky Rink at Chelsea Piers, New York, NY", time:"9:00 PM"},
     {date:"2026-10-10", opp:"NYU", home:false, loc:"Sky Rink at Chelsea Piers, New York, NY", time:"6:00 PM"},
     {date:"2026-10-16", opp:"Penn State (D2)", home:true, loc:"McMullen Arena, Annapolis", time:"5:30 PM"},
@@ -804,20 +818,25 @@ const GALLERY = [
    photo is optional: drop a square image in img/merch/ and point to it.
    Items without a photo show a plain navy tile, which looks deliberate. */
 /* OPTIONAL per item: desc:"..." , sizes:"S-XXL", colors:"Navy, gray",
-   material:"80/20 cotton-poly". Anything you add shows on the item page. */
+   material:"80/20 cotton-poly". Anything you add shows on the item page.
+   status: "soldout"  -> "Sold out — more in stock soon"
+           "soon"     -> "Coming soon"
+   Remove the status line when an item is orderable again. */
 const MERCH = [
-  {name:"UA Hoodie",                price:"$55", photo:"img/merch/ua-hoodie.jpg"},
-  {name:"Full-Zip Sweatshirt",      price:"$55", photo:"img/merch/full-zip.jpg"},
-  {name:"UA Lightweight Hoodie",    price:"$50", photo:"img/merch/ua-lightweight-hoodie.jpg"},
+  {name:"UA Youth Hoodie",          price:"$55", photo:"img/merch/ua-hoodie.jpg", status:"soldout"},
+  {name:"Full-Zip Sweatshirt",      price:"$55", photo:"img/merch/full-zip.jpg", status:"soon"},
+  {name:"UA Lightweight Hoodie",    price:"$50", photo:"img/merch/ua-lightweight-hoodie.jpg", status:"soon"},
   {name:"UA Quarter-Zip",           price:"$50", photo:"img/merch/ua-quarter-zip.jpg"},
   {name:"Champion Crewneck",        price:"$40", photo:"img/merch/champion-crewneck.jpg"},
   {name:"UA Long Sleeve T-Shirt",   price:"$35", photo:"img/merch/ua-long-sleeve.jpg"},
   {name:"UA Short Sleeve T-Shirt",  price:"$30", photo:"img/merch/ua-short-sleeve.jpg"},
-  {name:"Blanket",                  price:"$75", photo:"img/merch/blanket.jpg"},
-  {name:"Hat",                      price:"$25", photo:"img/merch/hat.jpg"},
+  {name:"Blanket",                  price:"$75", photo:"img/merch/blanket.jpg", status:"soldout"},
+  {name:"Trucker Hat",              price:"$25", photo:"img/merch/trucker-hat.jpg"},
+  {name:"Classic Hat",              price:"$25", photo:"img/merch/classic-hat.jpg"},
   {name:"Beanie",                   price:"$25", photo:"img/merch/beanie.jpg"},
   {name:"Mittens",                  price:"$20", photo:"img/merch/mittens.jpg"},
-  {name:"Youth Hoodie (navy or gray)", price:"$25", photo:"img/merch/youth-hoodie.jpg"}
+  /* price not set yet — the tile and item page simply omit it until you add one */
+  {name:"White Jersey",                          photo:"img/merch/white-jersey.png"}
 ];
 
 const CONTACTS = [
@@ -1078,6 +1097,11 @@ function renderRoster(teamId){
   });
 })();
 
+const STATUS = {
+  soldout: {label:"Sold out", note:"Sold out — more in stock soon"},
+  soon:    {label:"Coming soon", note:"Coming soon"}
+};
+
 /* merch */
 (function renderMerch(){
   const mount = document.getElementById("merch-grid");   // NOT "merch" — that id belongs to the <section>
@@ -1092,10 +1116,14 @@ function renderRoster(teamId){
     img.addEventListener("error", ()=>card.classList.add("no-photo"));
     if(!m.photo) card.classList.add("no-photo");
     shot.appendChild(img);
+    if(m.status && STATUS[m.status]){
+      card.classList.add("unavailable");
+      shot.appendChild(el("div","ribbon", STATUS[m.status].label));
+    }
     card.appendChild(shot);
     const body = el("div","item-body");
     body.appendChild(el("div","item-name", m.name));
-    body.appendChild(el("div","item-price", m.price));
+    if(m.price) body.appendChild(el("div","item-price", m.price));
     card.appendChild(body);
     mount.appendChild(card);
   });
@@ -1220,7 +1248,7 @@ function slugify(s){
     right.appendChild(el("div","sheet-eyebrow","Team store"));
     const t = el("h2","sheet-title", m.name); t.id = "sheet-title";
     right.appendChild(t);
-    right.appendChild(el("div","sheet-sub", m.price));
+    if(m.price) right.appendChild(el("div","sheet-sub", m.price));
 
     const dl = el("dl","facts");
     fact(dl,"Sizes", m.sizes);
@@ -1228,12 +1256,17 @@ function slugify(s){
     fact(dl,"Material", m.material);
     right.appendChild(dl);
 
+    if(m.status && STATUS[m.status])
+      right.appendChild(el("p","stock-note", STATUS[m.status].note));
+
     if(m.desc) right.appendChild(el("p","sheet-note", m.desc));
     else right.appendChild(el("p","sheet-empty","Sizes and details available on request."));
 
-    const cta = el("p",null,
-      `<a class="btn" href="mailto:kellyteuschl@gmail.com?subject=${encodeURIComponent("Navy Hockey order: " + m.name)}">Email Kelly to order</a>`);
-    right.appendChild(cta);
+    const waiting = !!m.status;
+    const subject = encodeURIComponent((waiting ? "Navy Hockey restock: " : "Navy Hockey order: ") + m.name);
+    right.appendChild(el("p",null,
+      `<a class="btn${waiting ? " btn-ghost" : ""}" href="mailto:kellyteuschl@gmail.com?subject=${subject}">` +
+      (waiting ? "Ask Kelly to let you know" : "Email Kelly to order") + `</a>`));
 
     body.innerHTML = "";
     body.appendChild(left); body.appendChild(right);
