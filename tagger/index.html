@@ -1,0 +1,943 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#08172B">
+<title>Game Tagger · Navy Hockey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy-900:#08172B; --navy-800:#0E2440; --navy-700:#14314F; --navy-600:#1B3D66;
+  --gold:#C8A233; --gold-lt:#E8C15A; --ice:#EDF2F6; --rink:#C3D4E0; --slate:#8A9AA9;
+  --line:rgba(195,212,224,.18); --them:#B9C6D2; --bad:#E0655A; --good:#4FBF83;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--navy-900);color:var(--ice);
+  font-family:"Barlow",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:16px}
+h1,h2,h3,.cond{font-family:"Barlow Condensed","Barlow",Impact,sans-serif;letter-spacing:.02em}
+button{font:inherit;color:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:var(--ice);background:var(--navy-800);border:1px solid var(--line);
+  border-radius:8px;padding:10px;width:100%}
+label{display:block;font-size:.8rem;color:var(--slate);margin:12px 0 4px;text-transform:uppercase;letter-spacing:.06em}
+a{color:var(--gold-lt)}
+.wrap{max-width:1180px;margin:0 auto;padding:12px 16px calc(24px + env(safe-area-inset-bottom))}
+header.top{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line);
+  background:var(--navy-800);position:sticky;top:0;z-index:20}
+header.top .brand{font-family:"Barlow Condensed";font-weight:700;color:var(--gold);font-size:1.15rem;white-space:nowrap}
+header.top .title{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--rink);font-size:.95rem}
+header.top .save{font-size:.75rem;color:var(--slate)}
+.btn{background:var(--navy-700);border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-height:44px}
+.btn:active{transform:scale(.98)}
+.btn.gold{background:var(--gold);color:var(--navy-900);border-color:var(--gold);font-weight:600}
+.btn.ghost{background:transparent}
+.btn.small{min-height:34px;padding:6px 10px;font-size:.85rem}
+.btn.on{outline:2px solid var(--gold);background:var(--navy-600)}
+.btn.danger{border-color:var(--bad);color:var(--bad)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{background:var(--navy-800);border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
+.muted{color:var(--slate);font-size:.9rem}
+.hidden{display:none!important}
+
+/* ---- tagging screen ---- */
+.layout{display:grid;gap:12px}
+@media (min-width:980px){.layout.has-video{grid-template-columns:minmax(0,1.35fr) minmax(360px,1fr)}}
+.video{position:relative;background:#000;border-radius:12px;overflow:hidden;aspect-ratio:16/9}
+.video>div,.video iframe{position:absolute;inset:0;width:100%;height:100%}
+.vctl{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.status{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--navy-800);border:1px solid var(--line);
+  border-radius:12px;padding:8px 10px}
+.score{font-family:"Barlow Condensed";font-size:1.6rem;font-weight:700;display:flex;gap:8px;align-items:baseline}
+.score .us{color:var(--gold-lt)} .score .them{color:var(--them)}
+.score small{font-size:.75rem;color:var(--slate);font-weight:500;letter-spacing:.08em}
+.per button{min-width:40px}
+.state{font-family:"Barlow Condensed";font-weight:700;padding:6px 10px;border-radius:8px;font-size:1rem;min-height:40px}
+.state.live{background:rgba(79,191,131,.15);color:var(--good);border:1px solid var(--good)}
+.state.dead{background:rgba(224,101,90,.12);color:var(--bad);border:1px solid var(--bad)}
+.clock{font-variant-numeric:tabular-nums;color:var(--rink);margin-left:auto;font-size:.95rem}
+.onice{background:var(--navy-800);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-top:10px}
+.onice .lbl{font-size:.72rem;color:var(--slate);letter-spacing:.08em;text-transform:uppercase;margin-right:2px}
+.onice .unit{min-width:48px;min-height:42px;font-family:"Barlow Condensed";font-weight:700;font-size:1.05rem}
+.onice .who{font-size:.85rem;color:var(--rink);margin-top:6px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.actions .col h3{margin:0 0 6px;font-size:1rem;text-align:center}
+.actions .col.us h3{color:var(--gold-lt)} .actions .col.them h3{color:var(--them)}
+.act{width:100%;min-height:56px;margin-bottom:8px;border-radius:12px;font-family:"Barlow Condensed";font-weight:700;
+  font-size:1.2rem;letter-spacing:.03em;border:1px solid var(--line);background:var(--navy-700)}
+.col.us .act{border-color:rgba(200,162,51,.45)}
+.act.goal{background:rgba(200,162,51,.18)} .col.them .act.goal{background:rgba(185,198,210,.12)}
+.act kbd,.wide kbd{font-family:"Barlow";font-size:.65rem;color:var(--slate);border:1px solid var(--line);border-radius:4px;padding:0 4px;margin-left:6px;vertical-align:middle}
+.wide{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:2px}
+.wide .act{min-height:52px;font-size:1.05rem;margin:0}
+@media (max-width:420px){.wide{grid-template-columns:repeat(2,1fr)}}
+.log{margin-top:12px}
+.log h3{margin:0 0 6px;font-size:1rem;color:var(--rink)}
+.ev{display:grid;grid-template-columns:62px 1fr auto;gap:8px;align-items:center;padding:8px 10px;border-bottom:1px solid var(--line);font-size:.92rem}
+.ev .t{font-variant-numeric:tabular-nums;color:var(--slate);font-size:.8rem}
+.ev.us .d b{color:var(--gold-lt)} .ev.them .d b{color:var(--them)}
+.ev .x{color:var(--slate);font-size:.8rem}
+.banner{background:rgba(200,162,51,.12);border:1px solid var(--gold);border-radius:10px;padding:10px;margin-top:8px;font-size:.9rem}
+
+/* ---- sheet (step-by-step flows) ---- */
+.scrim{position:fixed;inset:0;background:rgba(3,10,20,.6);z-index:40}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--navy-800);border-top:2px solid var(--gold);
+  border-radius:16px 16px 0 0;max-height:92vh;overflow:auto;padding:14px 16px calc(16px + env(safe-area-inset-bottom))}
+@media (min-width:760px){.sheet{left:50%;right:auto;transform:translateX(-50%);width:640px;bottom:16px;border-radius:16px;border:2px solid var(--gold)}}
+.sheet h2{margin:0 0 4px;font-size:1.35rem}
+.sheet .step{color:var(--slate);font-size:.85rem;margin-bottom:10px}
+.choices{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.choices .btn{min-height:54px;font-family:"Barlow Condensed";font-weight:700;font-size:1.1rem}
+.nums{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px}
+.nums .btn{min-height:52px;padding:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05}
+.nums .btn b{font-family:"Barlow Condensed";font-size:1.25rem}
+.nums .btn span{font-size:.62rem;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.nums .btn.oi{border-color:var(--gold)}
+.sub{font-size:.75rem;color:var(--slate);letter-spacing:.08em;text-transform:uppercase;margin:12px 0 6px}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:320px}
+.keypad .btn{min-height:52px;font-size:1.3rem;font-family:"Barlow Condensed";font-weight:700}
+.kpv{font-family:"Barlow Condensed";font-size:2rem;font-weight:700;color:var(--them);min-height:44px}
+.rinkbox{display:flex;justify-content:center}
+.rinkbox svg{width:min(100%,360px);height:auto;touch-action:manipulation;background:var(--ice);border-radius:14px}
+.sheet .foot{display:flex;gap:8px;justify-content:space-between;margin-top:14px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--gold);color:var(--navy-900);
+  padding:10px 16px;border-radius:999px;font-weight:600;z-index:60;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+
+/* ---- setup ---- */
+.lines{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:6px;align-items:center}
+.lines .ln{font-family:"Barlow Condensed";font-weight:700;color:var(--gold-lt);padding-right:6px}
+.lines select{padding:8px 6px;font-size:.9rem}
+.gamelist .g{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line)}
+table.help{border-collapse:collapse;font-size:.9rem} table.help td{padding:3px 10px 3px 0}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">NAVY HOCKEY · TAGGER</div>
+  <div class="title" id="hdrTitle"></div>
+  <div class="save" id="hdrSave"></div>
+  <button class="btn small ghost" id="hdrMenu" title="Games, export, help">☰</button>
+</header>
+
+<!-- ======================= SETUP / HOME ======================= -->
+<main class="wrap" id="home">
+  <div class="card">
+    <h2 style="margin:0 0 6px">Your games</h2>
+    <div class="muted">Saved on this device automatically. Export a game and send the file to Capt Dorchuck when you're done.</div>
+    <div class="gamelist" id="gameList"></div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn gold" id="newGameBtn">+ New game</button>
+      <button class="btn" id="importBtn">Import a .tags.json file</button>
+      <input type="file" id="importFile" accept=".json,application/json" class="hidden">
+    </div>
+  </div>
+  <div class="card">
+    <h3 style="margin:0 0 6px">How tagging works</h3>
+    <ul class="muted" style="margin:0;padding-left:18px;line-height:1.5">
+      <li><b>At the rink:</b> open this page on your phone, start the game, and tap things as they happen. Every tag is time-stamped.</li>
+      <li><b>From the YouTube stream:</b> paste the link when you create the game (or later in Settings). The video plays here; play it at 1.5–2× and tag.</li>
+      <li><b>Both:</b> tag live, then open the same game with the video. Line up one faceoff and every live tag snaps onto the video, so you can fix and fill in.</li>
+      <li>Tap the line buttons (F1–F4, D1–D3) the moment a new line hits the ice. That's how ice time and +/- get counted.</li>
+    </ul>
+  </div>
+</main>
+
+<!-- ======================= NEW GAME / SETTINGS ======================= -->
+<main class="wrap hidden" id="setup">
+  <div class="card">
+    <h2 style="margin:0" id="setupTitle">New game</h2>
+    <div class="grid2">
+      <div><label for="sTeam">Team</label><select id="sTeam"></select></div>
+      <div><label for="sSched">Game from schedule</label><select id="sSched"></select></div>
+    </div>
+    <div class="grid2">
+      <div><label for="sDate">Date</label><input type="date" id="sDate"></div>
+      <div><label for="sOpp">Opponent</label><input id="sOpp" placeholder="e.g. Delaware"></div>
+    </div>
+    <div class="grid2">
+      <div><label for="sHome">Home / away</label><select id="sHome"><option value="home">Home</option><option value="away">Away</option></select></div>
+      <div><label for="sColor">Navy is wearing</label><select id="sColor"><option value="dark">Dark (navy)</option><option value="white">White</option><option value="gold">Gold</option></select></div>
+    </div>
+    <label for="sYT">YouTube link (optional, can add later)</label>
+    <input id="sYT" placeholder="https://www.youtube.com/watch?v=...">
+    <label for="sTagger">Your name (so we know who tagged)</label>
+    <input id="sTagger" placeholder="e.g. Midn Smith">
+  </div>
+  <div class="card">
+    <div class="row" style="justify-content:space-between">
+      <h3 style="margin:0">Lines</h3>
+      <div class="row"><button class="btn small" id="linesFromLast">Copy last game's lines</button><button class="btn small" id="linesAuto">Auto-fill</button></div>
+    </div>
+    <div class="muted" style="margin:4px 0 10px">C/LW/RW and D pairs as dressed. You can change these mid-game from the menu.</div>
+    <div class="lines" id="linesGrid"></div>
+    <div class="grid2" style="margin-top:10px">
+      <div><label for="sG1">Starting goalie</label><select id="sG1"></select></div>
+      <div><label for="sG2">Backup goalie</label><select id="sG2"></select></div>
+    </div>
+    <div id="rosterNote" class="muted" style="margin-top:8px"></div>
+  </div>
+  <div class="row" style="justify-content:space-between">
+    <button class="btn ghost" id="setupCancel">Cancel</button>
+    <button class="btn gold" id="setupSave">Start tagging →</button>
+  </div>
+</main>
+
+<!-- ======================= TAGGING ======================= -->
+<main class="wrap hidden" id="tag">
+  <div class="layout" id="layout">
+    <section id="videoCol" class="hidden">
+      <div class="video"><div id="yt"></div></div>
+      <div class="vctl">
+        <button class="btn small" data-seek="-10">−10s</button>
+        <button class="btn small" data-seek="-3">−3s</button>
+        <button class="btn small" id="playBtn">▶︎ / ❚❚</button>
+        <button class="btn small" data-seek="3">+3s</button>
+        <button class="btn small" data-seek="10">+10s</button>
+        <span class="muted" style="margin-left:6px">Speed</span>
+        <button class="btn small" data-rate="1">1×</button>
+        <button class="btn small" data-rate="1.5">1.5×</button>
+        <button class="btn small" data-rate="2">2×</button>
+      </div>
+      <div id="syncBox"></div>
+      <div class="card" id="keysCard">
+        <div class="muted" style="margin-bottom:6px">Keyboard (laptop)</div>
+        <table class="help">
+          <tr><td><kbd>Space</kbd> play/pause</td><td><kbd>←</kbd>/<kbd>→</kbd> 3 s</td><td><kbd>,</kbd>/<kbd>.</kbd> speed</td></tr>
+          <tr><td><kbd>S</kbd> Navy shot</td><td><kbd>G</kbd> Navy goal</td><td><kbd>F</kbd> faceoff</td></tr>
+          <tr><td><kbd>D</kbd> their shot</td><td><kbd>H</kbd> their goal</td><td><kbd>W</kbd> whistle</td></tr>
+          <tr><td><kbd>1</kbd>–<kbd>4</kbd> F line on</td><td><kbd>7</kbd>–<kbd>9</kbd> D pair on</td><td><kbd>B</kbd> highlight ★</td></tr>
+          <tr><td><kbd>P</kbd> penalty</td><td><kbd>T</kbd>/<kbd>Y</kbd> hit Navy/them</td><td><kbd>Z</kbd> undo</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <div class="status">
+        <div class="score"><span class="us" id="scUs">0</span><small>NAVY</small><span>–</span><span class="them" id="scThem">0</span><small id="scOppName">OPP</small></div>
+        <div class="row per" id="perBtns"></div>
+        <button class="state live" id="stateBtn" title="Whistle (W)">PLAY ON</button>
+        <div class="clock" id="clock"></div>
+      </div>
+
+      <div class="onice">
+        <div class="row"><span class="lbl">Fwd</span><span id="fBtns" class="row"></span></div>
+        <div class="row" style="margin-top:6px"><span class="lbl">Def</span><span id="dBtns" class="row"></span>
+          <span class="lbl" style="margin-left:8px">G</span><span id="gBtns" class="row"></span>
+          <button class="btn small" id="customLineBtn" style="margin-left:auto">Custom…</button></div>
+        <div class="who" id="whoOn"></div>
+      </div>
+
+      <div class="actions">
+        <div class="col us"><h3>NAVY</h3>
+          <button class="act" data-act="shot" data-team="us">SHOT<kbd>S</kbd></button>
+          <button class="act goal" data-act="goal" data-team="us">GOAL<kbd>G</kbd></button>
+          <button class="act" data-act="hit" data-team="us">HIT<kbd>T</kbd></button>
+          <button class="act" data-act="penalty" data-team="us">PENALTY</button>
+        </div>
+        <div class="col them"><h3 id="oppHead">OPPONENT</h3>
+          <button class="act" data-act="shot" data-team="them">SHOT<kbd>D</kbd></button>
+          <button class="act goal" data-act="goal" data-team="them">GOAL<kbd>H</kbd></button>
+          <button class="act" data-act="hit" data-team="them">HIT<kbd>Y</kbd></button>
+          <button class="act" data-act="penalty" data-team="them">PENALTY</button>
+        </div>
+      </div>
+      <div class="wide">
+        <button class="act" data-act="faceoff">FACEOFF<kbd>F</kbd></button>
+        <button class="act" data-act="whistle">WHISTLE<kbd>W</kbd></button>
+        <button class="act" data-act="highlight">★ CLIP<kbd>B</kbd></button>
+        <button class="act" data-act="undo">UNDO<kbd>Z</kbd></button>
+      </div>
+
+      <div class="log">
+        <div class="row" style="justify-content:space-between"><h3>Events <span class="muted" id="evCount"></span></h3>
+          <button class="btn small" id="endPeriodBtn">End period</button></div>
+        <div id="evList"></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<div id="scrim" class="scrim hidden"></div>
+<div id="sheet" class="sheet hidden"></div>
+
+<script>
+"use strict";
+/* =====================================================================
+   Navy Hockey game tagger.  Everything is client-side; games are kept in
+   localStorage on this device and exported as <game>.tags.json for
+   `hockey tagreport` (hockey-analytics repo) to turn into the report.
+   Coordinates: shot locations are stored "attacking up" — xn = feet from
+   center ice toward the net being shot at (goal line = 89), yn = feet
+   left(+)/right(−) of the net from the shooter's point of view.
+   ===================================================================== */
+const SCHEMA = "usna-hockey-tags/1";
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+/* ------------------------------------------------------------------ site data */
+let SITE = { TEAMS: [{id:"md1",name:"Men's D1"},{id:"md3",name:"Men's D3 ECA"},{id:"wd2",name:"Women's D2"}], ROSTER: {}, SCHEDULE: {} };
+function grabBlock(src, name) {
+  const i = src.indexOf("const " + name + " =");
+  if (i < 0) return null;
+  const start = src.indexOf("=", i) + 1;
+  // walk to the matching close of the top-level literal
+  let depth = 0, j = start, inStr = null, began = false;
+  for (; j < src.length; j++) {
+    const c = src[j], p = src[j - 1];
+    if (inStr) { if (c === inStr && p !== "\\") inStr = null; continue; }
+    if (c === "/" && src[j + 1] === "*") { j = src.indexOf("*/", j + 2) + 1; continue; }
+    if (c === "/" && src[j + 1] === "/") { j = src.indexOf("\n", j); continue; }
+    if (c === '"' || c === "'" || c === "`") { inStr = c; continue; }
+    if (c === "{" || c === "[") { depth++; began = true; }
+    if (c === "}" || c === "]") { depth--; if (began && depth === 0) { j++; break; } }
+  }
+  try { return (new Function("return (" + src.slice(start, j) + ");"))(); } catch (e) { return null; }
+}
+async function loadSite() {
+  try {
+    const r = await fetch("../index.html", { cache: "no-cache" });
+    if (!r.ok) throw 0;
+    const src = await r.text();
+    for (const k of ["TEAMS", "ROSTER", "SCHEDULE"]) { const v = grabBlock(src, k); if (v) SITE[k] = v; }
+  } catch (e) { /* offline or opened from disk: roster can be typed in */ }
+}
+
+/* ------------------------------------------------------------------ game state */
+let G = null;            // the active game
+const LINE_KEYS = ["F1","F2","F3","F4","D1","D2","D3"];
+const LINE_SLOTS = { F: ["C","LW","RW"], D: ["LD","RD"] };
+
+function gameIndex() { return store.get("tagger.index", []); }
+function saveGame() {
+  if (!G) return;
+  G.updated = new Date().toISOString();
+  const ok = store.set("tagger.game." + G.id, G);
+  const idx = gameIndex().filter(x => x.id !== G.id);
+  idx.unshift({ id: G.id, title: gameTitle(G), updated: G.updated, n: G.events.length });
+  store.set("tagger.index", idx.slice(0, 60));
+  $("#hdrSave").textContent = ok ? "saved " + new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"}) : "⚠ not saved — export now";
+}
+function loadGame(id) { return store.get("tagger.game." + id, null); }
+function gameTitle(g) { return `${g.date || ""} ${teamName(g.team)} ${g.home === "away" ? "@" : "vs"} ${g.opp || "?"}`.trim(); }
+function teamName(id) { return (SITE.TEAMS.find(t => t.id === id) || {}).name || id || ""; }
+function roster() { return (G && G.roster) || []; }
+function pName(n) { const p = roster().find(p => +p.num === +n); return p ? p.name : ""; }
+function shortName(n) { const nm = pName(n); return nm ? nm.split(" ").slice(-1)[0] : ""; }
+
+/* ------------------------------------------------------------------ time */
+let YTP = null, ytReady = false;
+function vTime() { try { return (YTP && ytReady && YTP.getCurrentTime) ? +YTP.getCurrentTime().toFixed(2) : null; } catch (e) { return null; } }
+function stamp() { return { tw: Date.now(), tv: vTime() }; }
+function evTime(e) {                        // seconds on the video timeline, if known
+  if (e.tv != null) return e.tv;
+  const off = G.sync && G.sync[e.period];
+  return off != null ? +(e.tw / 1000 + off).toFixed(2) : null;
+}
+function fmtV(s) { if (s == null) return ""; s = Math.max(0, Math.round(s)); const h = Math.floor(s/3600), m = Math.floor(s%3600/60), x = s%60;
+  return (h ? h + ":" + String(m).padStart(2,"0") : m) + ":" + String(x).padStart(2,"0"); }
+function fmtW(ms) { return new Date(ms).toLocaleTimeString([], {hour:"numeric", minute:"2-digit", second:"2-digit"}); }
+function evClock(e) { const v = evTime(e); return v != null ? fmtV(v) : fmtW(e.tw).replace(/ (AM|PM)$/, ""); }
+function sortEvents() { G.events.sort((a, b) => { const ta = evTime(a), tb = evTime(b);
+  if (ta != null && tb != null) return ta - tb || a.tw - b.tw; return a.tw - b.tw; }); }
+
+/* ------------------------------------------------------------------ derived state */
+function currentOnIce() {
+  const L = G.lines, o = G.onice;
+  const f = (L[o.F] || []).filter(Boolean), d = (L[o.D] || []).filter(Boolean);
+  const custom = o.custom ? o.custom.slice() : null;
+  const skaters = custom || [...f, ...d];
+  return { F: o.F, D: o.D, G: o.G, skaters, players: [...skaters, ...(o.G ? [o.G] : [])] };
+}
+function score() { let us = 0, them = 0; for (const e of G.events) if (e.type === "goal") e.team === "us" ? us++ : them++; return { us, them }; }
+function isLive() {   // play is on after a faceoff, off after a whistle / goal / period end
+  for (let i = G.events.length - 1; i >= 0; i--) { const t = G.events[i].type;
+    if (t === "faceoff") return true; if (t === "whistle" || t === "goal" || t === "period_end") return false; }
+  return false;
+}
+
+/* ------------------------------------------------------------------ events */
+function addEvent(ev) {
+  if (!G.events.some(e => e.type === "change")) {   // first tag of the game: record who started
+    const oi = currentOnIce();
+    G.events.push({ id: uid(), type: "change", period: G.period, tw: ev.tw - 1, tv: ev.tv != null ? ev.tv - 0.01 : null,
+      F: oi.F, D: oi.D, G: oi.G, onice: oi.players, auto: true });
+  }
+  ev.id = ev.id || uid(); ev.period = ev.period || G.period; ev.by = G.tagger || "";
+  G.events.push(ev); sortEvents(); saveGame(); render();
+  toast(describe(ev, true));
+}
+function lineChange(patch, at) {
+  const t = at || stamp();
+  Object.assign(G.onice, patch);
+  if (patch.F || patch.D) G.onice.custom = patch.custom || null;
+  const oi = currentOnIce();
+  G.events.push({ id: uid(), type: "change", period: G.period, ...t, F: oi.F, D: oi.D, G: oi.G, onice: oi.players,
+    custom: !!G.onice.custom, by: G.tagger || "" });
+  sortEvents(); saveGame(); render();
+  toast("On ice: " + [oi.F, oi.D].filter(Boolean).join(" · ") + (oi.G ? " · G" + oi.G : " · goalie pulled"));
+}
+function describe(e, short) {
+  const T = e.team === "us" ? "Navy" : (G.opp || "Opp");
+  const who = n => n != null && n !== "" ? "#" + n + (e.team === "us" && shortName(n) ? " " + shortName(n) : "") : "";
+  const zone = e.xn != null ? " · " + shotZone(e.xn, e.yn) : "";
+  switch (e.type) {
+    case "shot": return `<b>${T}</b> shot ${({on_goal:"on goal",missed:"missed",blocked:"blocked"})[e.result]} ${who(e.player)}${zone}`;
+    case "goal": { const a = [e.a1, e.a2].filter(x => x != null && x !== "").map(x => "#" + x).join(", ");
+      return `<b>${T} GOAL</b> ${who(e.player)}${a ? " (" + a + ")" : ""}${e.strength && e.strength !== "EV" ? " · " + e.strength : ""}${zone}`; }
+    case "faceoff": return `<b>Faceoff</b> ${e.won ? "WON" : "lost"} ${e.player ? "#" + e.player : ""} · ${dotLabel(e.dot)}`;
+    case "hit": return `<b>${T}</b> hit ${who(e.player)}`;
+    case "penalty": return `<b>${T}</b> penalty ${who(e.player)} · ${e.minutes} min ${e.infraction || ""}`;
+    case "whistle": return `<b>Whistle</b>`;
+    case "period_end": return `<b>End of period ${e.period}</b>`;
+    case "highlight": return `<b>★ Clip</b> ${esc(e.note || "")}`;
+    case "change": return `<span class="muted">Line change → ${[e.F, e.D].filter(Boolean).join(" · ")}${e.custom ? " (custom)" : ""}${e.G ? " · G" + e.G : " · no goalie"}</span>`;
+  }
+  return e.type;
+}
+
+/* ------------------------------------------------------------------ rink geometry */
+function shotZone(xn, yn) {      // must match hockey/rink.py shot_zone
+  const ay = Math.abs(yn);
+  if (xn > 89) return "behind net";
+  if (xn < 25) return "outside zone";
+  if (xn >= 69 && ay <= 11) return "low slot";
+  if (xn >= 54 && ay <= 11) return "high slot";
+  if (xn >= 54 && ay <= 30) return yn > 0 ? "left circle" : "right circle";
+  if (xn >= 54) return "sharp angle";
+  return "point";
+}
+const DOTS = [   // attacking UP the screen: x = feet toward the net Navy attacks
+  {id:"OZ-L", x:69, y:22, label:"Off. zone L"}, {id:"OZ-R", x:69, y:-22, label:"Off. zone R"},
+  {id:"NZ-OL", x:20, y:22, label:"Neutral (off.) L"}, {id:"NZ-OR", x:20, y:-22, label:"Neutral (off.) R"},
+  {id:"C", x:0, y:0, label:"Center ice"},
+  {id:"NZ-DL", x:-20, y:22, label:"Neutral (def.) L"}, {id:"NZ-DR", x:-20, y:-22, label:"Neutral (def.) R"},
+  {id:"DZ-L", x:-69, y:22, label:"Def. zone L"}, {id:"DZ-R", x:-69, y:-22, label:"Def. zone R"},
+];
+function dotLabel(id) { return (DOTS.find(d => d.id === id) || {}).label || id || ""; }
+
+const RED = "#C8323C", BLUE = "#2E5FA8";
+function rinkMarkings(full) {
+  // SVG in feet. Screen x = 42.5 - y (left of shooter on the left); screen y = top - x
+  const top = 100, H = full ? 200 : 100;
+  const Y = x => top - x;
+  const r = 28, parts = [];
+  // boards (rounded both ends when full, top only when half)
+  if (full) parts.push(`<rect x="0.5" y="0.5" width="84" height="199" rx="${r}" ry="${r}" fill="#F7FAFC" stroke="#1B3D66" stroke-width="1"/>`);
+  else parts.push(`<path d="M0.5,100 L0.5,${r} A${r},${r} 0 0 1 ${r},0.5 L${85-r},0.5 A${r},${r} 0 0 1 84.5,${r} L84.5,100 Z" fill="#F7FAFC" stroke="#1B3D66" stroke-width="1"/>`);
+  const gl = (x, w) => { const half = Math.sqrt(Math.max(r*r - Math.pow(Math.abs(x) - 72, 2), 0)) + 14.5;
+    return `<line x1="${42.5-half}" x2="${42.5+half}" y1="${Y(x)}" y2="${Y(x)}" stroke="${RED}" stroke-width="${w}"/>`; };
+  parts.push(gl(89, .5));
+  parts.push(`<line x1="0" x2="85" y1="${Y(25)}" y2="${Y(25)}" stroke="${BLUE}" stroke-width="1.2"/>`);
+  if (full) { parts.push(gl(-89, .5));
+    parts.push(`<line x1="0" x2="85" y1="${Y(-25)}" y2="${Y(-25)}" stroke="${BLUE}" stroke-width="1.2"/>`);
+    parts.push(`<line x1="0" x2="85" y1="${Y(0)}" y2="${Y(0)}" stroke="${RED}" stroke-width="1"/>`);
+    parts.push(`<circle cx="42.5" cy="${Y(0)}" r="15" fill="none" stroke="${BLUE}" stroke-width=".5"/>`); }
+  else parts.push(`<line x1="0" x2="85" y1="${Y(0)}" y2="${Y(0)}" stroke="${RED}" stroke-width="1" stroke-dasharray="2 1.5"/>`);
+  for (const gx of full ? [89, -89] : [89]) {
+    const s = Math.sign(gx);
+    parts.push(`<path d="M36.5,${Y(gx)} A6,6 0 0 ${s > 0 ? 0 : 1} 48.5,${Y(gx)}" fill="rgba(46,95,168,.18)" stroke="${RED}" stroke-width=".4"/>`);
+    parts.push(`<rect x="39.5" y="${s > 0 ? Y(gx) - 3.3 : Y(gx)}" width="6" height="3.3" fill="none" stroke="#222" stroke-width=".6"/>`);
+    for (const dy of [22, -22]) parts.push(`<circle cx="${42.5-dy}" cy="${Y(s*69)}" r="15" fill="none" stroke="${RED}" stroke-width=".5"/>`);
+  }
+  return { svg: parts.join(""), H, Y };
+}
+
+/* ------------------------------------------------------------------ sheet (modal flows) */
+let flow = null;
+function openSheet(html) { $("#sheet").innerHTML = html; $("#sheet").classList.remove("hidden"); $("#scrim").classList.remove("hidden"); $("#sheet").scrollTop = 0; }
+function closeSheet() { $("#sheet").classList.add("hidden"); $("#scrim").classList.add("hidden"); flow = null; }
+$("#scrim").onclick = closeSheet;
+
+function stepHeader(title, step, team) {
+  const c = team === "us" ? "var(--gold-lt)" : team === "them" ? "var(--them)" : "var(--ice)";
+  return `<h2 style="color:${c}">${title}</h2><div class="step">${step}</div>`;
+}
+function footer(extra) {
+  return `<div class="foot"><button class="btn ghost" data-f="cancel">Cancel</button><div class="row">${extra || ""}</div></div>`;
+}
+function bindSheet(handlers) {
+  $("#sheet").onclick = ev => {
+    const b = ev.target.closest("[data-f]"); if (!b) return;
+    const f = b.dataset.f;
+    if (f === "cancel") return closeSheet();
+    if (handlers[f]) handlers[f](b.dataset.v, b);
+  };
+}
+
+/* rink picker: half rink (shot location) or full rink (faceoff dot) */
+function rinkPicker(kind, onPick, opts = {}) {
+  const full = kind === "dots";
+  const m = rinkMarkings(full);
+  let extra = "";
+  if (full) extra = DOTS.map(d => `<g data-dot="${d.id}" style="cursor:pointer">
+      <circle cx="${42.5-d.y}" cy="${m.Y(d.x)}" r="7" fill="rgba(200,50,60,.10)" stroke="${RED}" stroke-width=".6"/>
+      <circle cx="${42.5-d.y}" cy="${m.Y(d.x)}" r="1.6" fill="${RED}"/></g>`).join("") +
+    `<text x="42.5" y="5" text-anchor="middle" font-size="4" fill="#14314F" font-family="Barlow Condensed">NAVY ATTACKS ↑</text>`;
+  else extra = `<text x="42.5" y="96" text-anchor="middle" font-size="3.6" fill="#14314F" font-family="Barlow Condensed">${esc(opts.caption || "")}</text><g id="mark"></g>`;
+  const svg = `<svg viewBox="0 0 85 ${m.H}" id="rinkSvg">${m.svg}${extra}</svg>`;
+  return { html: `<div class="rinkbox">${svg}</div>`, bind() {
+    const el = $("#rinkSvg");
+    el.addEventListener("click", ev => {
+      if (full) { const g = ev.target.closest("[data-dot]"); if (g) { onPick(g.dataset.dot); return; }
+        // tap anywhere: nearest dot
+        const p = svgPoint(el, ev), x = 100 - p.y, y = 42.5 - p.x;
+        let best = DOTS[0], bd = 1e9; for (const d of DOTS) { const dd = (d.x - x) ** 2 + (d.y - y) ** 2; if (dd < bd) { bd = dd; best = d; } }
+        onPick(best.id); return; }
+      const p = svgPoint(el, ev);
+      const xn = Math.max(-5, Math.min(100, 100 - p.y)), yn = Math.max(-42.5, Math.min(42.5, 42.5 - p.x));
+      $("#mark").innerHTML = `<circle cx="${p.x}" cy="${p.y}" r="2.2" fill="${RED}" stroke="#fff" stroke-width=".6"/>`;
+      setTimeout(() => onPick(+xn.toFixed(1), +yn.toFixed(1)), 120);
+    });
+  }};
+}
+function svgPoint(svg, ev) { const pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); }
+
+/* player pickers */
+function navyPicker(prompt, opts = {}) {
+  const oi = currentOnIce(), on = new Set((opts.pool || oi.players).map(Number));
+  const sorted = roster().slice().sort((a, b) => (on.has(+b.num) - on.has(+a.num)) || a.num - b.num);
+  const onBtns = sorted.filter(p => on.has(+p.num)), offBtns = sorted.filter(p => !on.has(+p.num) && !(opts.exclude || []).includes(+p.num));
+  const btn = p => `<button class="btn ${on.has(+p.num) ? "oi" : ""}" data-f="pick" data-v="${p.num}"><b>${p.num}</b><span>${esc(p.name.split(" ").slice(-1)[0])}</span></button>`;
+  return `<div class="sub">${esc(prompt)} — on ice</div><div class="nums">${onBtns.filter(p => !(opts.exclude || []).includes(+p.num)).map(btn).join("") || '<span class="muted">nobody marked on ice</span>'}</div>
+    <div class="sub">Everyone else</div><div class="nums">${offBtns.map(btn).join("")}</div>`;
+}
+function keypad(prompt) {
+  return `<div class="sub">${esc(prompt)}</div><div class="kpv" id="kpv">#</div><div class="keypad">
+    ${[1,2,3,4,5,6,7,8,9].map(n => `<button class="btn" data-f="kp" data-v="${n}">${n}</button>`).join("")}
+    <button class="btn" data-f="kp" data-v="clr">⌫</button><button class="btn" data-f="kp" data-v="0">0</button>
+    <button class="btn gold" data-f="kpok">OK</button></div>`;
+}
+function bindKeypad(handlers, onOk) {
+  let v = "";
+  handlers.kp = d => { v = d === "clr" ? v.slice(0, -1) : (v + d).slice(-2); $("#kpv").textContent = "#" + v; };
+  handlers.kpok = () => onOk(v === "" ? null : +v);
+}
+
+/* ---------------- flows ---------------- */
+function flowShot(team) {
+  const t = stamp(), ev = { type: "shot", team, ...t };
+  const step1 = () => { openSheet(stepHeader(team === "us" ? "Navy shot" : (G.opp || "Opponent") + " shot", "1 / 3 · Result", team) +
+      `<div class="choices"><button class="btn" data-f="r" data-v="on_goal">On goal</button><button class="btn" data-f="r" data-v="missed">Missed net</button>
+       <button class="btn" data-f="r" data-v="blocked">Blocked</button></div>` + footer());
+    bindSheet({ r: v => { ev.result = v; step2(); } }); };
+  const step2 = () => { const rp = rinkPicker("half", (x, y) => { ev.xn = x; ev.yn = y; step3(); }, { caption: "tap where the shot came FROM · net at top" });
+    openSheet(stepHeader("Where from?", "2 / 3 · Tap the spot (facing the net being shot at)", team) + rp.html + footer(`<button class="btn" data-f="skip">Skip</button>`));
+    rp.bind(); bindSheet({ skip: step3 }); };
+  const step3 = () => {
+    if (team === "us") { openSheet(stepHeader("Shooter", "3 / 3", team) + navyPicker("Who shot?") + footer(`<button class="btn" data-f="skip">Don't know</button>`));
+      bindSheet({ pick: v => { ev.player = +v; done(); }, skip: done }); }
+    else { const h = {}; openSheet(stepHeader("Shooter #", "3 / 3 · optional", team) + keypad("Their number") + footer(`<button class="btn" data-f="skip">Skip</button>`));
+      bindKeypad(h, n => { if (n != null) ev.player = n; done(); }); h.skip = done; bindSheet(h); } };
+  const done = () => { closeSheet(); addEvent(ev); };
+  step1();
+}
+
+function flowGoal(team) {
+  const t = stamp(), ev = { type: "goal", team, ...t, strength: "EV" };
+  const oi = currentOnIce(); ev.onice = oi.players.slice();
+  const s1 = () => { const rp = rinkPicker("half", (x, y) => { ev.xn = x; ev.yn = y; s2(); }, { caption: "tap where the goal was scored FROM" });
+    openSheet(stepHeader(team === "us" ? "NAVY GOAL" : (G.opp || "Opponent") + " goal", "1 / 5 · Where from?", team) + rp.html + footer(`<button class="btn" data-f="skip">Skip</button>`));
+    rp.bind(); bindSheet({ skip: s2 }); };
+  const s2 = () => {
+    if (team === "us") { openSheet(stepHeader("Scorer", "2 / 5", team) + navyPicker("Who scored?") + footer(`<button class="btn" data-f="skip">Don't know</button>`));
+      bindSheet({ pick: v => { ev.player = +v; s3(); }, skip: s3 }); }
+    else { const h = {}; openSheet(stepHeader("Scorer #", "2 / 5 · optional", team) + keypad("Their number") + footer(`<button class="btn" data-f="skip">Skip</button>`));
+      bindKeypad(h, n => { if (n != null) ev.player = n; s4(); }); h.skip = s4; bindSheet(h); } };
+  const s3 = (which = "a1") => {
+    openSheet(stepHeader(which === "a1" ? "First assist" : "Second assist", "3 / 5", team) +
+      navyPicker("Assist", { exclude: [ev.player, ev.a1].filter(x => x != null).map(Number) }) +
+      footer(`<button class="btn" data-f="none">${which === "a1" ? "Unassisted" : "No 2nd assist"}</button>`));
+    bindSheet({ pick: v => { ev[which] = +v; which === "a1" ? s3("a2") : s4(); }, none: s4 }); };
+  const s4 = () => {
+    const opts = [["EV","Even strength"],["PP", team === "us" ? "Navy power play" : "Their power play"],["SH","Shorthanded"],["EN","Empty net"]];
+    openSheet(stepHeader("Strength", "4 / 5", team) + `<div class="choices">${opts.map(([v, l]) => `<button class="btn ${v === "EV" ? "on" : ""}" data-f="s" data-v="${v}">${l}</button>`).join("")}</div>` + footer());
+    bindSheet({ s: v => { ev.strength = v; s5(); } }); };
+  const s5 = () => {
+    const sel = new Set(ev.onice.map(Number));
+    const draw = () => {
+      openSheet(stepHeader("Navy players on ice", "5 / 5 · for +/- · tap to fix, then Save", team) +
+        `<div class="nums">${roster().map(p => `<button class="btn ${sel.has(+p.num) ? "on" : ""}" data-f="tog" data-v="${p.num}"><b>${p.num}</b><span>${esc(p.name.split(" ").slice(-1)[0])}</span></button>`).join("")}</div>` +
+        footer(`<button class="btn gold" data-f="save">Save goal</button>`));
+      bindSheet({ tog: v => { sel.has(+v) ? sel.delete(+v) : sel.add(+v); draw(); }, save: () => { ev.onice = [...sel]; closeSheet(); addEvent(ev); } }); };
+    draw(); };
+  s1();
+}
+
+function flowFaceoff() {
+  const t = stamp(), ev = { type: "faceoff", ...t };
+  const s1 = () => { const rp = rinkPicker("dots", id => { ev.dot = id; s2(); });
+    openSheet(stepHeader("Faceoff", "1 / 3 · Which dot? (Navy attacks up)") + rp.html + footer()); rp.bind(); bindSheet({}); };
+  const s2 = () => { openSheet(stepHeader("Faceoff — " + dotLabel(ev.dot), "2 / 3 · Who won it?") +
+      `<div class="choices"><button class="btn" data-f="w" data-v="1" style="border-color:var(--gold)">NAVY WON</button><button class="btn" data-f="w" data-v="0">Navy lost</button></div>` + footer());
+    bindSheet({ w: v => { ev.won = v === "1"; s3(); } }); };
+  const s3 = () => { const oi = currentOnIce(); const fwd = (G.lines[oi.F] || []).filter(Boolean);
+    openSheet(stepHeader("Navy faceoff man", "3 / 3") + navyPicker("Who took it?", { pool: fwd.length ? fwd : oi.skaters }) + footer(`<button class="btn" data-f="skip">Don't know</button>`));
+    bindSheet({ pick: v => { ev.player = +v; done(); }, skip: done }); };
+  const done = () => { closeSheet(); addEvent(ev); };
+  s1();
+}
+
+function flowHit(team) {
+  const t = stamp(), ev = { type: "hit", team, ...t };
+  if (team === "us") { openSheet(stepHeader("Navy hit", "Who threw it?", team) + navyPicker("Hitter") + footer(`<button class="btn" data-f="skip">Don't know</button>`));
+    bindSheet({ pick: v => { ev.player = +v; closeSheet(); addEvent(ev); }, skip: () => { closeSheet(); addEvent(ev); } }); }
+  else { const h = {}; openSheet(stepHeader("Their hit", "optional number", team) + keypad("Their number") + footer(`<button class="btn" data-f="skip">Skip</button>`));
+    bindKeypad(h, n => { if (n != null) ev.player = n; closeSheet(); addEvent(ev); }); h.skip = () => { closeSheet(); addEvent(ev); }; bindSheet(h); }
+}
+
+const INFRACTIONS = ["Tripping","Hooking","Slashing","Holding","Interference","Roughing","High-sticking","Cross-checking",
+  "Boarding","Checking from behind","Too many men","Delay of game","Unsportsmanlike","Fighting","Misconduct","Other"];
+function flowPenalty(team) {
+  const t = stamp(), ev = { type: "penalty", team, ...t, minutes: 2 };
+  const s1 = () => {
+    if (team === "us") { openSheet(stepHeader("Navy penalty", "1 / 3 · Who?", team) + navyPicker("Player") + footer(`<button class="btn" data-f="skip">Bench / unknown</button>`));
+      bindSheet({ pick: v => { ev.player = +v; s2(); }, skip: s2 }); }
+    else { const h = {}; openSheet(stepHeader("Their penalty", "1 / 3 · number (optional)", team) + keypad("Their number") + footer(`<button class="btn" data-f="skip">Skip</button>`));
+      bindKeypad(h, n => { if (n != null) ev.player = n; s2(); }); h.skip = s2; bindSheet(h); } };
+  const s2 = () => { openSheet(stepHeader("Minutes", "2 / 3", team) + `<div class="choices">${[2,4,5,10].map(m => `<button class="btn" data-f="m" data-v="${m}">${m} min</button>`).join("")}</div>` + footer());
+    bindSheet({ m: v => { ev.minutes = +v; s3(); } }); };
+  const s3 = () => { openSheet(stepHeader("Infraction", "3 / 3", team) + `<div class="choices">${INFRACTIONS.map(i => `<button class="btn" data-f="i" data-v="${i}">${i}</button>`).join("")}</div>` + footer());
+    bindSheet({ i: v => { ev.infraction = v; closeSheet(); addEvent(ev); } }); };
+  s1();
+}
+
+function flowHighlight() {
+  const t = stamp(), ev = { type: "highlight", ...t };
+  openSheet(stepHeader("★ Save a clip", "Marks the last ~10 seconds for the highlight reel") +
+    `<label for="hlNote">Note (optional)</label><input id="hlNote" placeholder="e.g. big save by Smargiassi">` +
+    footer(`<button class="btn gold" data-f="save">Save clip</button>`));
+  setTimeout(() => $("#hlNote") && $("#hlNote").focus(), 50);
+  bindSheet({ save: () => { ev.note = $("#hlNote").value.trim(); closeSheet(); addEvent(ev); } });
+}
+
+function flowCustomLine() {
+  const at = stamp(), sel = new Set(currentOnIce().skaters.map(Number)); let gk = G.onice.G;
+  const draw = () => {
+    const goalies = roster().filter(p => p.pos === "G");
+    openSheet(stepHeader("Custom on-ice group", "Tap every Navy skater on the ice (PP/PK units, double-shifts…)") +
+      `<div class="nums">${roster().filter(p => p.pos !== "G").map(p => `<button class="btn ${sel.has(+p.num) ? "on" : ""}" data-f="tog" data-v="${p.num}"><b>${p.num}</b><span>${esc(p.name.split(" ").slice(-1)[0])}</span></button>`).join("")}</div>
+       <div class="sub">Goalie</div><div class="row">${goalies.map(p => `<button class="btn ${+gk === +p.num ? "on" : ""}" data-f="g" data-v="${p.num}">#${p.num} ${esc(p.name.split(" ").slice(-1)[0])}</button>`).join("")}
+       <button class="btn ${!gk ? "on" : ""}" data-f="g" data-v="">Pulled</button></div>` +
+      footer(`<button class="btn gold" data-f="save">Set on ice (${sel.size})</button>`));
+    bindSheet({ tog: v => { sel.has(+v) ? sel.delete(+v) : sel.add(+v); draw(); }, g: v => { gk = v ? +v : null; draw(); },
+      save: () => { closeSheet(); lineChange({ custom: [...sel], G: gk, F: "X", D: "X" }, at); } }); };
+  draw();
+}
+
+function flowEdit(id) {
+  const e = G.events.find(x => x.id === id); if (!e) return;
+  const v = evTime(e);
+  openSheet(stepHeader("Edit event", evClock(e)) + `<div style="margin:8px 0 12px">${describe(e)}</div>
+    <div class="row">${v != null && YTP ? `<button class="btn" data-f="jump">▶ Watch it (−5 s)</button>` : ""}
+      <button class="btn" data-f="nudge" data-v="-2">−2 s</button><button class="btn" data-f="nudge" data-v="2">+2 s</button>
+      ${e.team ? `<button class="btn" data-f="flip">Switch team</button>` : ""}
+      ${e.type === "faceoff" ? `<button class="btn" data-f="flipwon">Flip won/lost</button>` : ""}
+      ${e.type === "shot" ? `<button class="btn" data-f="res" data-v="on_goal">On goal</button><button class="btn" data-f="res" data-v="missed">Missed</button><button class="btn" data-f="res" data-v="blocked">Blocked</button>` : ""}
+      ${["shot","goal","hit","penalty","faceoff"].includes(e.type) ? `<button class="btn" data-f="who">Change player</button>` : ""}
+    </div>` + footer(`<button class="btn danger" data-f="del">Delete</button><button class="btn gold" data-f="cancel">Done</button>`));
+  const commit = () => { sortEvents(); saveGame(); render(); flowEdit(id); };
+  bindSheet({
+    jump: () => { seekTo(v - 5); YTP.playVideo && YTP.playVideo(); closeSheet(); },
+    nudge: d => { if (e.tv != null) e.tv = +(e.tv + +d).toFixed(2); e.tw += +d * 1000; commit(); },
+    flip: () => { e.team = e.team === "us" ? "them" : "us"; delete e.player; commit(); },
+    flipwon: () => { e.won = !e.won; commit(); },
+    res: r => { e.result = r; commit(); },
+    who: () => {
+      if (e.team === "them") { const h = {}; openSheet(stepHeader("Their number", "") + keypad("Number") + footer());
+        bindKeypad(h, n => { e.player = n; commit(); }); bindSheet(h); }
+      else { openSheet(stepHeader("Navy player", "") + navyPicker("Player") + footer()); bindSheet({ pick: n => { e.player = +n; commit(); } }); } },
+    del: () => { if (confirm("Delete this event?")) { G.events = G.events.filter(x => x.id !== id); saveGame(); render(); closeSheet(); } },
+  });
+}
+
+/* ------------------------------------------------------------------ actions */
+function act(name, team) {
+  if (!G) return;
+  if (!$("#sheet").classList.contains("hidden")) return;
+  switch (name) {
+    case "shot": return flowShot(team);
+    case "goal": return flowGoal(team);
+    case "hit": return flowHit(team);
+    case "penalty": return flowPenalty(team);
+    case "faceoff": return flowFaceoff();
+    case "highlight": return flowHighlight();
+    case "whistle": return addEvent({ type: "whistle", ...stamp() });
+    case "undo": {
+      const last = G.events.filter(e => !e.auto).sort((a, b) => b.tw - a.tw)[0];
+      if (!last) return; if (!confirm("Undo: " + describe(last).replace(/<[^>]+>/g, "") + "?")) return;
+      G.events = G.events.filter(e => e.id !== last.id); saveGame(); render(); toast("Undone");
+    }
+  }
+}
+$$("[data-act]").forEach(b => b.addEventListener("click", () => act(b.dataset.act, b.dataset.team)));
+$("#stateBtn").onclick = () => isLive() ? act("whistle") : act("faceoff");
+$("#endPeriodBtn").onclick = () => {
+  if (!confirm(`End period ${G.period}?`)) return;
+  addEvent({ type: "period_end", ...stamp() });
+  if (G.period < 4) setPeriod(G.period + 1);
+};
+$("#customLineBtn").onclick = flowCustomLine;
+
+function setPeriod(p) { G.period = p; saveGame(); render(); }
+
+document.addEventListener("keydown", ev => {
+  if (!G || $("#tag").classList.contains("hidden")) return;
+  if (ev.target.matches("input,textarea,select")) return;
+  if (!$("#sheet").classList.contains("hidden")) { if (ev.key === "Escape") closeSheet(); return; }
+  const k = ev.key;
+  const map = { s: ["shot","us"], g: ["goal","us"], d: ["shot","them"], h: ["goal","them"], f: ["faceoff"], w: ["whistle"],
+    b: ["highlight"], p: ["penalty","us"], t: ["hit","us"], y: ["hit","them"], z: ["undo"] };
+  if (map[k.toLowerCase()] && !ev.ctrlKey && !ev.metaKey) { ev.preventDefault(); act(...map[k.toLowerCase()]); return; }
+  if ("1234".includes(k) && G.lines["F" + k]) { lineChange({ F: "F" + k }); return; }
+  if ("789".includes(k) && G.lines["D" + (k - 6)]) { lineChange({ D: "D" + (k - 6) }); return; }
+  if (!YTP) return;
+  if (k === " ") { ev.preventDefault(); togglePlay(); }
+  if (k === "ArrowLeft") { ev.preventDefault(); seekBy(-3); }
+  if (k === "ArrowRight") { ev.preventDefault(); seekBy(3); }
+  if (k === ",") setRate(-1); if (k === ".") setRate(1);
+});
+
+/* ------------------------------------------------------------------ video */
+function ytId(url) {
+  if (!url) return null;
+  const m = String(url).match(/(?:youtu\.be\/|v=|\/live\/|\/embed\/|\/shorts\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : (/^[A-Za-z0-9_-]{11}$/.test(url) ? url : null);
+}
+let ytApiPromise = null;
+function loadYT() {
+  if (window.YT && window.YT.Player) return Promise.resolve();
+  if (!ytApiPromise) ytApiPromise = new Promise(res => {
+    window.onYouTubeIframeAPIReady = res;
+    const s = document.createElement("script"); s.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(s);
+  });
+  return ytApiPromise;
+}
+async function setupVideo() {
+  const id = ytId(G.youtube);
+  $("#videoCol").classList.toggle("hidden", !id);
+  $("#layout").classList.toggle("has-video", !!id);
+  if (!id) { YTP = null; ytReady = false; return; }
+  if (YTP && YTP._vid === id) return;
+  await loadYT();
+  $("#yt").outerHTML = '<div id="yt"></div>';
+  ytReady = false;
+  YTP = new YT.Player("yt", { videoId: id, playerVars: { playsinline: 1, rel: 0, modestbranding: 1 },
+    events: { onReady: () => { ytReady = true; render(); } } });
+  YTP._vid = id;
+}
+function togglePlay() { if (!YTP || !ytReady) return; YTP.getPlayerState() === 1 ? YTP.pauseVideo() : YTP.playVideo(); }
+function seekTo(s) { if (YTP && ytReady) YTP.seekTo(Math.max(0, s), true); }
+function seekBy(d) { const t = vTime(); if (t != null) seekTo(t + d); }
+const RATES = [1, 1.25, 1.5, 1.75, 2];
+function setRate(dir, exact) { if (!YTP || !ytReady) return; const cur = YTP.getPlaybackRate();
+  const r = exact || RATES[Math.max(0, Math.min(RATES.length - 1, RATES.indexOf(cur) + dir))] || 1; YTP.setPlaybackRate(r); toast(r + "× speed"); }
+$$("[data-seek]").forEach(b => b.onclick = () => seekBy(+b.dataset.seek));
+$$("[data-rate]").forEach(b => b.onclick = () => setRate(0, +b.dataset.rate));
+$("#playBtn").onclick = togglePlay;
+
+/* live tags -> video timeline: line up the first tag of a period with the video */
+function renderSync() {
+  const box = $("#syncBox"); if (!YTP) { box.innerHTML = ""; return; }
+  const per = [...new Set(G.events.filter(e => e.tv == null && !e.auto).map(e => e.period))].sort();
+  const need = per.filter(p => G.sync[p] == null);
+  if (!per.length) { box.innerHTML = ""; return; }
+  box.innerHTML = per.map(p => {
+    const ref = G.events.filter(e => e.period === p && e.tv == null && e.type === "faceoff")[0] || G.events.filter(e => e.period === p && e.tv == null && !e.auto)[0];
+    const done = G.sync[p] != null;
+    return `<div class="banner">${done ? "✓" : "⏱"} <b>Period ${p}</b>: ${G.events.filter(e => e.period === p && e.tv == null).length} live tags.
+      ${done ? "Synced to the video." : `Find this moment in the video: <b>${describe(ref).replace(/<[^>]+>/g, "")}</b> (tagged at ${fmtW(ref.tw)}), pause on it, then:`}
+      <button class="btn small ${done ? "" : "gold"}" data-sync="${p}" data-ref="${ref.id}">${done ? "Re-sync here" : "Sync here"}</button></div>`;
+  }).join("") + (need.length ? "" : "");
+  $$("[data-sync]").forEach(b => b.onclick = () => {
+    const t = vTime(); if (t == null) return toast("Start the video first");
+    const ref = G.events.find(e => e.id === b.dataset.ref);
+    G.sync[+b.dataset.sync] = +(t - ref.tw / 1000).toFixed(2);
+    sortEvents(); saveGame(); render(); toast("Period " + b.dataset.sync + " synced");
+  });
+}
+
+/* ------------------------------------------------------------------ render */
+function render() {
+  if (!G) return;
+  $("#hdrTitle").textContent = gameTitle(G);
+  const sc = score(); $("#scUs").textContent = sc.us; $("#scThem").textContent = sc.them;
+  $("#scOppName").textContent = (G.opp || "OPP").toUpperCase(); $("#oppHead").textContent = (G.opp || "OPPONENT").toUpperCase();
+  $("#perBtns").innerHTML = [1,2,3,4].map(p => `<button class="btn small ${G.period === p ? "on" : ""}" data-per="${p}">${p === 4 ? "OT" : "P" + p}</button>`).join("");
+  $$("[data-per]").forEach(b => b.onclick = () => setPeriod(+b.dataset.per));
+  const live = isLive(); const sb = $("#stateBtn");
+  sb.className = "state " + (live ? "live" : "dead"); sb.textContent = live ? "PLAY ON · tap = whistle" : "STOPPED · tap = faceoff";
+  // on-ice
+  const o = G.onice, L = G.lines;
+  $("#fBtns").innerHTML = ["F1","F2","F3","F4"].filter(k => (L[k] || []).some(Boolean)).map((k, i) => `<button class="btn unit ${o.F === k && !o.custom ? "on" : ""}" data-line="F" data-v="${k}" title="key ${i+1}">${k}</button>`).join("");
+  $("#dBtns").innerHTML = ["D1","D2","D3"].filter(k => (L[k] || []).some(Boolean)).map((k, i) => `<button class="btn unit ${o.D === k && !o.custom ? "on" : ""}" data-line="D" data-v="${k}" title="key ${i+7}">${k}</button>`).join("");
+  const goalies = [G.g1, G.g2].filter(Boolean);
+  $("#gBtns").innerHTML = goalies.map(n => `<button class="btn unit ${+o.G === +n ? "on" : ""}" data-line="G" data-v="${n}">${n}</button>`).join("") +
+    `<button class="btn unit ${!o.G ? "on" : ""}" data-line="G" data-v="">—</button>`;
+  $$("[data-line]").forEach(b => b.onclick = () => { const k = b.dataset.line, v = b.dataset.v;
+    if (k === "G") lineChange({ G: v ? +v : null }); else lineChange({ [k]: v }); });
+  const oi = currentOnIce();
+  $("#whoOn").innerHTML = (o.custom ? '<span class="muted">custom · </span>' : "") + oi.skaters.map(n => `#${n} ${esc(shortName(n))}`).join(" · ") + (oi.G ? ` · <span class="muted">G</span> #${oi.G}` : ' · <span style="color:var(--bad)">goalie pulled</span>');
+  // log
+  const evs = G.events.filter(e => !e.auto).slice().reverse();
+  $("#evCount").textContent = "· " + evs.length;
+  $("#evList").innerHTML = evs.slice(0, 300).map(e => `<div class="ev ${e.team || ""}" data-ev="${e.id}">
+      <div class="t">P${e.period === 4 ? "OT" : e.period} ${evClock(e)}</div><div class="d">${describe(e)}</div><div class="x">✎</div></div>`).join("") ||
+    '<div class="muted" style="padding:10px">No events yet. Tap the line that\'s starting, then FACEOFF at the opening draw.</div>';
+  $$("[data-ev]").forEach(r => r.onclick = () => flowEdit(r.dataset.ev));
+  renderSync();
+}
+setInterval(() => { if (!G || $("#tag").classList.contains("hidden")) return;
+  const v = vTime(); $("#clock").textContent = v != null ? "▶ " + fmtV(v) : fmtW(Date.now()); }, 500);
+
+let toastT = null;
+function toast(html) { let el = $(".toast"); if (!el) { el = document.createElement("div"); el.className = "toast"; document.body.appendChild(el); }
+  el.innerHTML = html; el.style.display = "block"; clearTimeout(toastT); toastT = setTimeout(() => el.style.display = "none", 1600); }
+
+/* ------------------------------------------------------------------ screens */
+function show(id) { for (const s of ["home","setup","tag"]) $("#" + s).classList.toggle("hidden", s !== id); window.scrollTo(0, 0);
+  if (id !== "tag") { $("#hdrTitle").textContent = ""; } }
+
+function renderHome() {
+  G = null; show("home");
+  const idx = gameIndex();
+  $("#gameList").innerHTML = idx.length ? idx.map(g => `<div class="g"><div><b>${esc(g.title)}</b><div class="muted">${g.n} events · ${new Date(g.updated).toLocaleString()}</div></div>
+      <div class="row"><button class="btn small gold" data-open="${g.id}">Open</button><button class="btn small" data-export="${g.id}">Export</button></div></div>`).join("")
+    : '<div class="muted" style="padding:10px 0">No games yet.</div>';
+  $$("[data-open]").forEach(b => b.onclick = () => openGame(b.dataset.open));
+  $$("[data-export]").forEach(b => b.onclick = () => exportGame(loadGame(b.dataset.export)));
+}
+function openGame(id) { const g = loadGame(id); if (!g) return toast("Couldn't load that game"); G = g; G.sync = G.sync || {};
+  show("tag"); setupVideo(); render(); }
+
+/* -------- setup form -------- */
+let editing = null;     // game being configured
+function teamRoster(team) { return (SITE.ROSTER[team] || []).map(p => ({ num: +p.num, name: p.name, pos: p.pos })); }
+function newGameForm(existing) {
+  editing = existing ? JSON.parse(JSON.stringify(existing)) : null;
+  show("setup"); $("#setupTitle").textContent = existing ? "Game settings" : "New game";
+  $("#sTeam").innerHTML = SITE.TEAMS.map(t => `<option value="${t.id}">${esc(t.name)}</option>`).join("");
+  const g = editing || { team: store.get("tagger.lastTeam", "md1"), date: new Date().toISOString().slice(0, 10), home: "home", our_color: "dark", tagger: store.get("tagger.name", "") };
+  $("#sTeam").value = g.team; $("#sDate").value = g.date || ""; $("#sOpp").value = g.opp || ""; $("#sHome").value = g.home || "home";
+  $("#sColor").value = g.our_color || "dark"; $("#sYT").value = g.youtube || ""; $("#sTagger").value = g.tagger || "";
+  fillSched(); fillLines(editing ? editing.lines : null, editing ? [editing.g1, editing.g2] : null);
+  $("#sTeam").disabled = !!existing;
+}
+function fillSched() {
+  const sched = SITE.SCHEDULE[$("#sTeam").value] || [];
+  $("#sSched").innerHTML = `<option value="">— pick or type below —</option>` + sched.map((s, i) =>
+    `<option value="${i}">${s.date} ${s.home ? "vs" : "@"} ${esc(s.opp)}${s.result ? " (" + (s.result.w ? "W " : "L ") + s.result.score + ")" : ""}</option>`).join("");
+  const today = new Date().toISOString().slice(0, 10);
+  const i = sched.findIndex(s => s.date === ($("#sDate").value || today));
+  if (i >= 0 && !editing) { $("#sSched").value = i; pickSched(); }
+}
+function pickSched() { const s = (SITE.SCHEDULE[$("#sTeam").value] || [])[+$("#sSched").value]; if (!s) return;
+  $("#sDate").value = s.date; $("#sOpp").value = s.opp; $("#sHome").value = s.home ? "home" : "away"; }
+$("#sSched").onchange = pickSched;
+$("#sTeam").onchange = () => { fillSched(); fillLines(null); };
+
+function fillLines(lines, goalies) {
+  const team = $("#sTeam").value, R = teamRoster(team);
+  $("#rosterNote").textContent = R.length ? `${R.length} players loaded from the website roster.` :
+    "No roster on the website for this team yet — add players to the ROSTER block in index.html, or type numbers below.";
+  const opts = (sel, filt) => `<option value="">—</option>` + R.filter(filt).map(p => `<option value="${p.num}" ${+sel === p.num ? "selected" : ""}>${p.num} ${esc(p.name)}</option>`).join("");
+  const sk = p => p.pos !== "G";
+  lines = lines || {};
+  $("#linesGrid").innerHTML = LINE_KEYS.map(k => {
+    const slots = LINE_SLOTS[k[0]];
+    return `<div class="ln">${k}</div>` + [0,1,2].map(i => i < slots.length ?
+      `<select data-ln="${k}" data-i="${i}" aria-label="${k} ${slots[i]}">${opts((lines[k] || [])[i], sk)}</select>` : `<div></div>`).join("");
+  }).join("");
+  const gs = R.filter(p => p.pos === "G");
+  goalies = goalies || [gs[0] && gs[0].num, gs[1] && gs[1].num];
+  $("#sG1").innerHTML = opts(goalies[0], p => p.pos === "G" || !gs.length);
+  $("#sG2").innerHTML = opts(goalies[1], p => p.pos === "G" || !gs.length);
+}
+function readLines() { const L = {}; for (const k of LINE_KEYS) L[k] = $$(`[data-ln="${k}"]`).map(s => s.value ? +s.value : null); return L; }
+$("#linesFromLast").onclick = () => { const last = store.get("tagger.lastLines." + $("#sTeam").value, null);
+  if (!last) return toast("No saved lines for this team yet"); fillLines(last.lines, last.goalies); };
+$("#linesAuto").onclick = () => { const R = teamRoster($("#sTeam").value); const F = R.filter(p => p.pos === "F"), D = R.filter(p => p.pos === "D");
+  const L = {}; ["F1","F2","F3","F4"].forEach((k, i) => L[k] = F.slice(i*3, i*3+3).map(p => p.num));
+  ["D1","D2","D3"].forEach((k, i) => L[k] = D.slice(i*2, i*2+2).map(p => p.num)); fillLines(L);
+  toast("Filled in numeric order — fix to match the real lines"); };
+$("#setupCancel").onclick = () => editing ? openGame(editing.id) : renderHome();
+$("#setupSave").onclick = () => {
+  const team = $("#sTeam").value, date = $("#sDate").value, opp = $("#sOpp").value.trim();
+  if (!opp) return toast("Opponent name, please");
+  const lines = readLines(), g1 = +$("#sG1").value || null, g2 = +$("#sG2").value || null;
+  if (!lines.F1.some(Boolean) || !lines.D1.some(Boolean)) return toast("Fill in at least F1 and D1");
+  store.set("tagger.lastTeam", team); store.set("tagger.name", $("#sTagger").value.trim());
+  store.set("tagger.lastLines." + team, { lines, goalies: [g1, g2] });
+  const base = editing || { schema: SCHEMA, id: `${date}-${team}-${opp.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}-${uid().slice(-4)}`,
+    created: new Date().toISOString(), events: [], sync: {}, period: 1 };
+  Object.assign(base, { team, date, opp, home: $("#sHome").value, our_color: $("#sColor").value, youtube: $("#sYT").value.trim(),
+    tagger: $("#sTagger").value.trim(), lines, g1, g2, roster: teamRoster(team).length ? teamRoster(team) : base.roster || manualRoster(lines, g1, g2) });
+  base.onice = base.onice || { F: "F1", D: "D1", G: g1 };
+  G = base; saveGame(); show("tag"); setupVideo(); render();
+};
+function manualRoster(lines, g1, g2) { const nums = new Set([...Object.values(lines).flat(), g1, g2].filter(Boolean));
+  return [...nums].map(n => ({ num: n, name: "", pos: n === g1 || n === g2 ? "G" : "" })); }
+
+/* -------- export / import -------- */
+function exportGame(g) {
+  if (!g) return;
+  const data = JSON.stringify({ ...g, exported: new Date().toISOString(), schema: SCHEMA }, null, 1);
+  const name = `${g.id}.tags.json`;
+  const file = new File([data], name, { type: "application/json" });
+  if (navigator.canShare && navigator.canShare({ files: [file] }) && /Mobi|Android|iPhone|iPad/.test(navigator.userAgent)) {
+    navigator.share({ files: [file], title: name, text: "Navy hockey tags: " + gameTitle(g) }).catch(() => download(data, name));
+  } else download(data, name);
+}
+function download(data, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([data], { type: "application/json" }));
+  a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+$("#importBtn").onclick = () => $("#importFile").click();
+$("#importFile").onchange = async ev => {
+  const f = ev.target.files[0]; if (!f) return;
+  try {
+    const g = JSON.parse(await f.text());
+    if (!g.schema || !String(g.schema).startsWith("usna-hockey-tags/")) throw new Error("not a tagger file");
+    const mine = loadGame(g.id);
+    if (mine && confirm("You already have this game. Merge the imported tags into it? (Cancel = replace yours)")) {
+      const ids = new Set(mine.events.map(e => e.id)); mine.events.push(...g.events.filter(e => !ids.has(e.id)));
+      mine.sync = { ...g.sync, ...mine.sync }; G = mine;
+    } else G = g;
+    G.sync = G.sync || {}; sortEvents(); saveGame(); openGame(G.id); toast("Imported " + g.events.length + " events");
+  } catch (e) { alert("Couldn't import that file: " + e.message); }
+  ev.target.value = "";
+};
+
+/* -------- menu -------- */
+$("#hdrMenu").onclick = () => {
+  if (!G) return renderHome();
+  openSheet(stepHeader(gameTitle(G), `${G.events.filter(e => !e.auto).length} events · tagged by ${esc(G.tagger || "?")}`) +
+    `<div class="choices" style="grid-template-columns:1fr 1fr">
+      <button class="btn gold" data-f="export">Export / send file</button>
+      <button class="btn" data-f="settings">Settings & lines</button>
+      <button class="btn" data-f="home">All games</button>
+      <button class="btn danger" data-f="delete">Delete this game</button></div>
+     <p class="muted" style="margin-top:12px">Export creates <code>${esc(G.id)}.tags.json</code>. On a phone it opens the share menu (text/email it); on a laptop it downloads.</p>` + footer());
+  bindSheet({ export: () => { closeSheet(); exportGame(G); }, settings: () => { closeSheet(); newGameForm(G); },
+    home: () => { closeSheet(); renderHome(); },
+    delete: () => { if (!confirm("Delete this game from this device? Export it first if you haven't.")) return;
+      store.del("tagger.game." + G.id); store.set("tagger.index", gameIndex().filter(x => x.id !== G.id)); closeSheet(); renderHome(); } });
+};
+$("#newGameBtn").onclick = () => newGameForm(null);
+
+/* -------- boot -------- */
+(async () => {
+  await loadSite();
+  const params = new URLSearchParams(location.search);
+  if (params.get("game") && loadGame(params.get("game"))) openGame(params.get("game")); else renderHome();
+})();
+</script>
+</body>
+</html>

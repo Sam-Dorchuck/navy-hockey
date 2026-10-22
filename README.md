@@ -96,3 +96,12 @@ This site should outlive whoever built it. When you turn it over, hand off:
 this README, the domain registrar login, the host login, and the raw photo
 archive. The next person needs to be able to edit one file and re-upload it —
 that is the whole job.
+
+
+## Game tagger (`/tagger/`)
+
+`usnahockey.com/tagger/` is an unlisted page (not linked from the site, `noindex`) that team managers use to tag games: shots with location, goals/assists/strength, faceoffs by dot, line changes, hits, penalties, and ★ highlight clips. It runs entirely in the browser. Tags are saved on the manager's device and exported as `<game>.tags.json`.
+
+- Rosters, teams and the schedule are read **live from `index.html`** (the `TEAMS`, `ROSTER` and `SCHEDULE` blocks), so keeping the site current keeps the tagger current. Don't rename those blocks.
+- Live at the rink on a phone, or from the YouTube stream on a laptop (link pasted in the game settings). Live tags are synced to the video later by lining up one faceoff per period.
+- The exported file goes to the `hockey-analytics` tool: `hockey tagreport <file>.tags.json` builds the stats report and highlight list.
