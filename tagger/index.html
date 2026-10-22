@@ -30,6 +30,12 @@ header.top{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bot
 header.top .brand{font-family:"Barlow Condensed";font-weight:700;color:var(--gold);font-size:1.15rem;white-space:nowrap}
 header.top .title{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--rink);font-size:.95rem}
 header.top .save{font-size:.75rem;color:var(--slate)}
+@media (max-width:560px){
+  header.top{gap:8px;padding:8px 10px}
+  header.top .brand{font-size:1rem}
+  header.top .brand .long{display:none}
+  header.top .save{display:none}
+}
 .btn{background:var(--navy-700);border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-height:44px}
 .btn:active{transform:scale(.98)}
 .btn.gold{background:var(--gold);color:var(--navy-900);border-color:var(--gold);font-weight:600}
@@ -62,7 +68,11 @@ header.top .save{font-size:.75rem;color:var(--slate)}
 .onice{background:var(--navy-800);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-top:10px}
 .onice .lbl{font-size:.72rem;color:var(--slate);letter-spacing:.08em;text-transform:uppercase;margin-right:2px}
 .onice .unit{min-width:48px;min-height:42px;font-family:"Barlow Condensed";font-weight:700;font-size:1.05rem}
-.onice .who{font-size:.85rem;color:var(--rink);margin-top:6px}
+.onice .who{font-size:.85rem;color:var(--rink);margin-top:8px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:var(--navy-700);border:1px solid var(--line);border-radius:999px;padding:6px 10px;min-height:38px;font-size:.88rem;color:var(--ice)}
+.chip b{font-family:"Barlow Condensed";font-size:1.05rem;color:var(--gold-lt)}
+.chip.dstart{margin-left:10px}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
 .actions .col h3{margin:0 0 6px;font-size:1rem;text-align:center}
 .actions .col.us h3{color:var(--gold-lt)} .actions .col.them h3{color:var(--them)}
@@ -106,6 +116,20 @@ header.top .save{font-size:.75rem;color:var(--slate)}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--gold);color:var(--navy-900);
   padding:10px 16px;border-radius:999px;font-weight:600;z-index:60;box-shadow:0 6px 20px rgba(0,0,0,.4)}
 
+/* ---- report ---- */
+.rep h2{font-size:1.25rem;margin:18px 0 6px;color:var(--gold-lt)}
+.rep .big{font-family:"Barlow Condensed";font-size:2.4rem;font-weight:700}
+.rep .big .n{color:var(--gold-lt)}
+.rep .tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.rep table{border-collapse:collapse;width:100%;font-size:.88rem}
+.rep th,.rep td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.rep th{color:var(--slate);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em}
+.rep td:first-child,.rep th:first-child,.rep .l{text-align:left}
+.rep .maps{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rep .maps svg{width:100%;height:auto;background:var(--ice);border-radius:12px}
+.rep .maps h3{margin:0 0 4px;font-size:.95rem;text-align:center}
+.rep .legend{font-size:.75rem;color:var(--slate);text-align:center;margin-top:4px}
+.rep .note{font-size:.8rem;color:var(--slate);margin-top:6px}
 /* ---- setup ---- */
 .lines{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:6px;align-items:center}
 .lines .ln{font-family:"Barlow Condensed";font-weight:700;color:var(--gold-lt);padding-right:6px}
@@ -116,9 +140,10 @@ table.help{border-collapse:collapse;font-size:.9rem} table.help td{padding:3px 1
 </head>
 <body>
 <header class="top">
-  <div class="brand">NAVY HOCKEY · TAGGER</div>
+  <div class="brand">NAVY<span class="long"> HOCKEY</span> · TAGGER</div>
   <div class="title" id="hdrTitle"></div>
   <div class="save" id="hdrSave"></div>
+  <button class="btn small gold hidden" id="hdrReport" title="Live report">REPORT</button>
   <button class="btn small ghost" id="hdrMenu" title="Games, export, help">☰</button>
 </header>
 
@@ -210,6 +235,7 @@ table.help{border-collapse:collapse;font-size:.9rem} table.help td{padding:3px 1
           <tr><td><kbd>D</kbd> their shot</td><td><kbd>H</kbd> their goal</td><td><kbd>W</kbd> whistle</td></tr>
           <tr><td><kbd>1</kbd>–<kbd>4</kbd> F line on</td><td><kbd>7</kbd>–<kbd>9</kbd> D pair on</td><td><kbd>B</kbd> highlight ★</td></tr>
           <tr><td><kbd>P</kbd> penalty</td><td><kbd>T</kbd>/<kbd>Y</kbd> hit Navy/them</td><td><kbd>Z</kbd> undo</td></tr>
+          <tr><td><kbd>R</kbd> live report</td><td></td><td></td></tr>
         </table>
       </div>
     </section>
@@ -258,6 +284,16 @@ table.help{border-collapse:collapse;font-size:.9rem} table.help td{padding:3px 1
       </div>
     </section>
   </div>
+</main>
+
+<!-- ======================= LIVE REPORT ======================= -->
+<main class="wrap hidden" id="report">
+  <div class="row" style="justify-content:space-between;margin-bottom:8px">
+    <button class="btn" id="repBack">← Back to tagging</button>
+    <div class="row" id="repPer"></div>
+    <button class="btn gold" id="repShare">Share report</button>
+  </div>
+  <div id="repBody" class="rep"></div>
 </main>
 
 <div id="scrim" class="scrim hidden"></div>
@@ -347,16 +383,33 @@ function fmtV(s) { if (s == null) return ""; s = Math.max(0, Math.round(s)); con
   return (h ? h + ":" + String(m).padStart(2,"0") : m) + ":" + String(x).padStart(2,"0"); }
 function fmtW(ms) { return new Date(ms).toLocaleTimeString([], {hour:"numeric", minute:"2-digit", second:"2-digit"}); }
 function evClock(e) { const v = evTime(e); return v != null ? fmtV(v) : fmtW(e.tw).replace(/ (AM|PM)$/, ""); }
-function sortEvents() { G.events.sort((a, b) => { const ta = evTime(a), tb = evTime(b);
+function sortEvents() { G.events.sort((a, b) => { if ((a.period || 0) !== (b.period || 0)) return (a.period || 0) - (b.period || 0);
+  const ta = evTime(a), tb = evTime(b);
   if (ta != null && tb != null) return ta - tb || a.tw - b.tw; return a.tw - b.tw; }); }
 
 /* ------------------------------------------------------------------ derived state */
+function normOnIce(g) {          // older saves stored {F, D, custom}; now 5 slots: [F, F, F, D, D]
+  const o = g.onice || {};
+  if (!Array.isArray(o.slots)) {
+    const L = g.lines || {};
+    o.slots = o.custom ? o.custom.slice() : [...(L[o.F || "F1"] || [null, null, null]).slice(0, 3), ...(L[o.D || "D1"] || [null, null]).slice(0, 2)];
+    delete o.custom; delete o.F; delete o.D;
+  }
+  if (!("G" in o)) o.G = g.g1 || null;
+  g.onice = o;
+}
+function unitLabel(kind, nums) {   // "F2" if those slots are exactly a dressed line, else "mixed"
+  const set = nums.filter(Boolean).map(Number).sort().join(",");
+  if (!set) return "";
+  const keys = kind === "F" ? ["F1","F2","F3","F4"] : ["D1","D2","D3"];
+  for (const k of keys) if ((G.lines[k] || []).filter(Boolean).map(Number).sort().join(",") === set) return k;
+  return "mixed";
+}
 function currentOnIce() {
-  const L = G.lines, o = G.onice;
-  const f = (L[o.F] || []).filter(Boolean), d = (L[o.D] || []).filter(Boolean);
-  const custom = o.custom ? o.custom.slice() : null;
-  const skaters = custom || [...f, ...d];
-  return { F: o.F, D: o.D, G: o.G, skaters, players: [...skaters, ...(o.G ? [o.G] : [])] };
+  const sl = G.onice.slots, skaters = sl.filter(x => x != null && x !== "").map(Number);
+  const standard = sl.length === 5;
+  return { F: standard ? unitLabel("F", sl.slice(0, 3)) : "custom", D: standard ? unitLabel("D", sl.slice(3, 5)) : "custom",
+           G: G.onice.G, skaters, players: [...skaters, ...(G.onice.G ? [+G.onice.G] : [])] };
 }
 function score() { let us = 0, them = 0; for (const e of G.events) if (e.type === "goal") e.team === "us" ? us++ : them++; return { us, them }; }
 function isLive() {   // play is on after a faceoff, off after a whistle / goal / period end
@@ -377,14 +430,25 @@ function addEvent(ev) {
   toast(describe(ev, true));
 }
 function lineChange(patch, at) {
-  const t = at || stamp();
-  Object.assign(G.onice, patch);
-  if (patch.F || patch.D) G.onice.custom = patch.custom || null;
+  // patch: {F:"F2"} whole forward line · {D:"D1"} whole pair · {slot:i, num:n} one player · {custom:[...]} · {G:n}
+  const t = at || stamp(), o = G.onice, before = currentOnIce().skaters;
+  if (o.slots.length !== 5 && (patch.F || patch.D)) o.slots = [...o.slots, null, null, null, null, null].slice(0, 5);
+  if (patch.F) o.slots.splice(0, 3, ...[...(G.lines[patch.F] || []), null, null, null].slice(0, 3));
+  if (patch.D) o.slots.splice(3, 2, ...[...(G.lines[patch.D] || []), null, null].slice(0, 2));
+  if (patch.slot != null) {
+    const other = o.slots.findIndex((x, i) => i !== patch.slot && x != null && +x === +patch.num);
+    if (other >= 0) o.slots[other] = o.slots[patch.slot];      // swapping two players already on the ice
+    o.slots[patch.slot] = patch.num;
+  }
+  if (patch.custom) o.slots = patch.custom.slice();
+  if ("G" in patch) o.G = patch.G;
   const oi = currentOnIce();
+  const off = before.filter(n => !oi.skaters.includes(n)), on = oi.skaters.filter(n => !before.includes(n));
   G.events.push({ id: uid(), type: "change", period: G.period, ...t, F: oi.F, D: oi.D, G: oi.G, onice: oi.players,
-    custom: !!G.onice.custom, by: G.tagger || "" });
+    on, off, by: G.tagger || "" });
   sortEvents(); saveGame(); render();
-  toast("On ice: " + [oi.F, oi.D].filter(Boolean).join(" · ") + (oi.G ? " · G" + oi.G : " · goalie pulled"));
+  toast(patch.slot != null ? `#${patch.num} on${off.length ? " for #" + off.join(", #") : ""}` :
+    "On ice: " + [oi.F, oi.D].filter(Boolean).join(" · ") + (oi.G ? " · G" + oi.G : " · goalie pulled"));
 }
 function describe(e, short) {
   const T = e.team === "us" ? "Navy" : (G.opp || "Opp");
@@ -400,7 +464,10 @@ function describe(e, short) {
     case "whistle": return `<b>Whistle</b>`;
     case "period_end": return `<b>End of period ${e.period}</b>`;
     case "highlight": return `<b>★ Clip</b> ${esc(e.note || "")}`;
-    case "change": return `<span class="muted">Line change → ${[e.F, e.D].filter(Boolean).join(" · ")}${e.custom ? " (custom)" : ""}${e.G ? " · G" + e.G : " · no goalie"}</span>`;
+    case "change": {
+      const swap = e.on && e.on.length && e.on.length <= 2 && (e.F === "mixed" || e.D === "mixed");
+      return `<span class="muted">${swap ? `Change: #${e.on.join(", #")} on${e.off && e.off.length ? " for #" + e.off.join(", #") : ""}`
+        : `Line change → ${[e.F, e.D].filter(Boolean).join(" · ")}`}${e.G ? " · G" + e.G : " · no goalie"}</span>`; }
   }
   return e.type;
 }
@@ -630,8 +697,21 @@ function flowCustomLine() {
        <button class="btn ${!gk ? "on" : ""}" data-f="g" data-v="">Pulled</button></div>` +
       footer(`<button class="btn gold" data-f="save">Set on ice (${sel.size})</button>`));
     bindSheet({ tog: v => { sel.has(+v) ? sel.delete(+v) : sel.add(+v); draw(); }, g: v => { gk = v ? +v : null; draw(); },
-      save: () => { closeSheet(); lineChange({ custom: [...sel], G: gk, F: "X", D: "X" }, at); } }); };
+      save: () => { closeSheet(); lineChange({ custom: [...sel], G: gk }, at); } }); };
   draw();
+}
+
+function flowSwap(i) {
+  const at = stamp(), cur = G.onice.slots[i], isD = G.onice.slots.length === 5 && i >= 3;
+  const onIce = new Set(currentOnIce().skaters);
+  const bench = roster().filter(p => p.pos !== "G" && !onIce.has(+p.num));
+  const pref = bench.filter(p => isD ? p.pos === "D" : p.pos !== "D"), rest = bench.filter(p => !pref.includes(p));
+  const btn = p => `<button class="btn" data-f="pick" data-v="${p.num}"><b>${p.num}</b><span>${esc(p.name.split(" ").slice(-1)[0])}</span></button>`;
+  openSheet(stepHeader(cur ? `Who came on for #${cur} ${esc(shortName(cur))}?` : "Who came on?", isD ? "Defense first" : "Forwards first") +
+    `<div class="nums">${pref.map(btn).join("")}</div>${rest.length ? `<div class="sub">${isD ? "Forwards" : "Defense"}</div><div class="nums">${rest.map(btn).join("")}</div>` : ""}` +
+    footer(cur ? `<button class="btn" data-f="none">Nobody (play short)</button>` : ""));
+  bindSheet({ pick: v => { closeSheet(); lineChange({ slot: i, num: +v }, at); },
+              none: () => { closeSheet(); lineChange({ slot: i, num: null }, at); } });
 }
 
 function flowEdit(id) {
@@ -697,6 +777,7 @@ document.addEventListener("keydown", ev => {
   const k = ev.key;
   const map = { s: ["shot","us"], g: ["goal","us"], d: ["shot","them"], h: ["goal","them"], f: ["faceoff"], w: ["whistle"],
     b: ["highlight"], p: ["penalty","us"], t: ["hit","us"], y: ["hit","them"], z: ["undo"] };
+  if (k.toLowerCase() === "r" && !ev.ctrlKey && !ev.metaKey) { ev.preventDefault(); return showReport(); }
   if (map[k.toLowerCase()] && !ev.ctrlKey && !ev.metaKey) { ev.preventDefault(); act(...map[k.toLowerCase()]); return; }
   if ("1234".includes(k) && G.lines["F" + k]) { lineChange({ F: "F" + k }); return; }
   if ("789".includes(k) && G.lines["D" + (k - 6)]) { lineChange({ D: "D" + (k - 6) }); return; }
@@ -778,15 +859,19 @@ function render() {
   sb.className = "state " + (live ? "live" : "dead"); sb.textContent = live ? "PLAY ON · tap = whistle" : "STOPPED · tap = faceoff";
   // on-ice
   const o = G.onice, L = G.lines;
-  $("#fBtns").innerHTML = ["F1","F2","F3","F4"].filter(k => (L[k] || []).some(Boolean)).map((k, i) => `<button class="btn unit ${o.F === k && !o.custom ? "on" : ""}" data-line="F" data-v="${k}" title="key ${i+1}">${k}</button>`).join("");
-  $("#dBtns").innerHTML = ["D1","D2","D3"].filter(k => (L[k] || []).some(Boolean)).map((k, i) => `<button class="btn unit ${o.D === k && !o.custom ? "on" : ""}" data-line="D" data-v="${k}" title="key ${i+7}">${k}</button>`).join("");
+  const cur = currentOnIce();
+  $("#fBtns").innerHTML = ["F1","F2","F3","F4"].filter(k => (L[k] || []).some(Boolean)).map((k, i) => `<button class="btn unit ${cur.F === k ? "on" : ""}" data-line="F" data-v="${k}" title="key ${i+1}">${k}</button>`).join("");
+  $("#dBtns").innerHTML = ["D1","D2","D3"].filter(k => (L[k] || []).some(Boolean)).map((k, i) => `<button class="btn unit ${cur.D === k ? "on" : ""}" data-line="D" data-v="${k}" title="key ${i+7}">${k}</button>`).join("");
   const goalies = [G.g1, G.g2].filter(Boolean);
   $("#gBtns").innerHTML = goalies.map(n => `<button class="btn unit ${+o.G === +n ? "on" : ""}" data-line="G" data-v="${n}">${n}</button>`).join("") +
     `<button class="btn unit ${!o.G ? "on" : ""}" data-line="G" data-v="">—</button>`;
   $$("[data-line]").forEach(b => b.onclick = () => { const k = b.dataset.line, v = b.dataset.v;
     if (k === "G") lineChange({ G: v ? +v : null }); else lineChange({ [k]: v }); });
   const oi = currentOnIce();
-  $("#whoOn").innerHTML = (o.custom ? '<span class="muted">custom · </span>' : "") + oi.skaters.map(n => `#${n} ${esc(shortName(n))}`).join(" · ") + (oi.G ? ` · <span class="muted">G</span> #${oi.G}` : ' · <span style="color:var(--bad)">goalie pulled</span>');
+  $("#whoOn").innerHTML = `<div class="chips">${o.slots.map((n, i) => `<button class="chip ${i === 3 && o.slots.length === 5 ? "dstart" : ""}" data-slot="${i}" title="tap if this player came off">
+      ${n ? `<b>${n}</b> ${esc(shortName(n))}` : '<span class="muted">empty</span>'}</button>`).join("")}</div>
+    <div class="muted" style="font-size:.78rem;margin-top:4px">Tap a player who came off to swap just him · Fwd ${oi.F || "—"} · Def ${oi.D || "—"}${oi.G ? " · G #" + oi.G : ' · <span style="color:var(--bad)">goalie pulled</span>'}</div>`;
+  $$("[data-slot]").forEach(b => b.onclick = () => flowSwap(+b.dataset.slot));
   // log
   const evs = G.events.filter(e => !e.auto).slice().reverse();
   $("#evCount").textContent = "· " + evs.length;
@@ -803,8 +888,153 @@ let toastT = null;
 function toast(html) { let el = $(".toast"); if (!el) { el = document.createElement("div"); el.className = "toast"; document.body.appendChild(el); }
   el.innerHTML = html; el.style.display = "block"; clearTimeout(toastT); toastT = setTimeout(() => el.style.display = "none", 1600); }
 
+/* ------------------------------------------------------------------ live stats
+   Same rules as hockey/tagstats.py so the in-game report matches the full one. */
+function computeStats(g, per) {
+  const tOf = e => { if (e.tv != null) return e.tv; const off = g.sync && g.sync[e.period]; return off != null ? e.tw / 1000 + off : null; };
+  const useVideo = g.events.length && g.events.filter(e => !e.auto).every(e => tOf(e) != null);
+  let ev = g.events.map(e => ({ ...e, t: useVideo && tOf(e) != null ? tOf(e) : e.tw / 1000 }));
+  ev.sort((a, b) => (a.period || 0) - (b.period || 0) || a.t - b.t || a.tw - b.tw);
+  if (useVideo) { ev.forEach((e, i) => { if (tOf(e) == null && ev[i + 1]) e.t = ev[i + 1].t - 0.01; }); ev.sort((a, b) => (a.period || 0) - (b.period || 0) || a.t - b.t || a.tw - b.tw); }
+  const inP = e => !per || e.period === per;
+  const R = (g.roster || []);
+  const goalies = new Set([...R.filter(p => p.pos === "G").map(p => +p.num), g.g1, g.g2].filter(Boolean).map(Number));
+  const changes = ev.filter(e => e.type === "change");
+  const onAt = t => { let cur = []; for (const c of changes) { if (c.t > t) break; cur = (c.onice || []).filter(x => x != null && x !== "").map(Number); } return new Set(cur); };
+  const P = {}, p = n => P[+n] || (P[+n] = { G:0, A:0, pm:0, SOG:0, att:0, FOW:0, FOL:0, hits:0, PIM:0, CF:0, CA:0, SA:0, GA:0, TOI:0, shifts:0 });
+  const shots = [];
+  for (const e of ev) {
+    if (!inP(e)) continue;
+    const us = e.team === "us";
+    if (e.type === "shot" || e.type === "goal") {
+      const on = e.type === "goal" && e.onice && e.onice.length ? new Set(e.onice.map(Number)) : onAt(e.type === "shot" ? e.t - 1e-6 : e.t);
+      const outcome = e.type === "goal" ? "goal" : (e.result || "on_goal");
+      shots.push({ team: e.team, outcome, xn: e.xn, yn: e.yn, zone: e.xn != null ? shotZone(e.xn, e.yn) : "unknown", strength: e.strength, period: e.period });
+      for (const n of on) if (!goalies.has(n)) p(n)[us ? "CF" : "CA"]++;
+      if (us && e.player != null) { const q = p(e.player); q.att++; if (outcome === "goal" || outcome === "on_goal") q.SOG++; if (outcome === "goal") q.G++; }
+      if (e.type === "goal" && us) for (const k of ["a1", "a2"]) if (e[k] != null) p(e[k]).A++;
+      if (e.type === "goal" && (e.strength || "EV") !== "PP") for (const n of on) if (!goalies.has(n)) p(n).pm += us ? 1 : -1;
+      if (!us && (outcome === "goal" || outcome === "on_goal")) { const gk = [...on].find(n => goalies.has(n)); if (gk != null) { p(gk).SA++; if (outcome === "goal") p(gk).GA++; } }
+    } else if (e.type === "faceoff" && e.player != null) p(e.player)[e.won ? "FOW" : "FOL"]++;
+    else if (e.type === "hit" && us && e.player != null) p(e.player).hits++;
+    else if (e.type === "penalty" && us && e.player != null) p(e.player).PIM += e.minutes || 2;
+  }
+  // ice time: live time (faceoff -> whistle/goal/period end) while on the ice
+  const hasFlow = ev.some(e => e.type === "faceoff" || e.type === "whistle");
+  let live = !hasFlow, on = new Set(), open = {}, lastT = null, lastP = null, curP;
+  const close = (n, t) => { const iv = open[n]; delete open[n]; if (!per || iv.p === per) { p(n).TOI += iv.live; if (t - iv.s >= 5 && iv.live > 0) p(n).shifts++; } };
+  for (const e of ev) {
+    if (lastT != null && live && e.t > lastT) for (const n of on) open[n].live += e.t - lastT;
+    lastT = e.t;
+    if (e.period !== curP) { curP = e.period; live = !hasFlow; for (const n of on) { close(n, e.t); open[n] = { s: e.t, live: 0, p: curP }; } }
+    if (e.type === "change") {
+      const nw = new Set((e.onice || []).filter(x => x != null && x !== "").map(Number));
+      for (const n of on) if (!nw.has(n)) close(n, e.t);
+      for (const n of nw) if (!on.has(n)) open[n] = { s: e.t, live: 0, p: e.period };
+      on = nw;
+    } else if (e.type === "faceoff") live = true;
+    else if (["whistle", "goal", "period_end"].includes(e.type)) live = false;
+  }
+  for (const n of Object.keys(open)) close(+n, lastT);
+
+  const fos = ev.filter(e => e.type === "faceoff" && inP(e));
+  const pens = ev.filter(e => e.type === "penalty" && inP(e));
+  const foZ = d => (d || "C").startsWith("OZ") ? "OZ" : (d || "C").startsWith("DZ") ? "DZ" : "NZ";
+  const team = {};
+  for (const tm of ["us", "them"]) {
+    const st = shots.filter(x => x.team === tm), sog = st.filter(x => x.outcome === "goal" || x.outcome === "on_goal").length;
+    const goals = st.filter(x => x.outcome === "goal").length, won = fos.filter(e => !!e.won === (tm === "us")).length;
+    const flip = { OZ: "DZ", DZ: "OZ", NZ: "NZ" }, byZ = {};
+    for (const z of ["OZ", "NZ", "DZ"]) { const zz = fos.filter(e => (tm === "us" ? foZ(e.dot) : flip[foZ(e.dot)]) === z);
+      const w = zz.filter(e => !!e.won === (tm === "us")).length; byZ[z] = `${w}-${zz.length - w}`; }
+    team[tm] = { goals, sog, att: st.length, missed: st.filter(x => x.outcome === "missed").length, blocked: st.filter(x => x.outcome === "blocked").length,
+      shpct: sog ? (100 * goals / sog).toFixed(1) : "–", fo: `${won}-${fos.length - won}`, fopct: fos.length ? (100 * won / fos.length).toFixed(1) : "–", byZ,
+      hits: ev.filter(e => e.type === "hit" && e.team === tm && inP(e)).length, pim: pens.filter(e => e.team === tm).reduce((a, e) => a + (e.minutes || 2), 0),
+      ppo: pens.filter(e => e.team !== tm).length, ppg: st.filter(x => x.outcome === "goal" && x.strength === "PP").length };
+  }
+  const zones = [];
+  for (const tm of ["us", "them"]) for (const z of ["low slot","high slot","left circle","right circle","sharp angle","point","behind net","outside zone"]) {
+    const zz = shots.filter(x => x.team === tm && x.zone === z); if (!zz.length) continue;
+    const og = zz.filter(x => x.outcome === "goal" || x.outcome === "on_goal").length, gl = zz.filter(x => x.outcome === "goal").length;
+    zones.push({ team: tm, zone: z, att: zz.length, og, gl, ogp: (100 * og / zz.length).toFixed(0), shp: og ? (100 * gl / og).toFixed(0) : "–" });
+  }
+  const players = Object.entries(P).map(([n, d]) => ({ num: +n, ...d, goalie: goalies.has(+n) }));
+  return { team, shots, zones, players, video: !!useVideo, hasFlow, periods: [...new Set(ev.map(e => e.period))].filter(Boolean).sort() };
+}
+
+let repPer = 0;
+function shotMapSvg(shots, title) {
+  const m = rinkMarkings(false);
+  const mk = s => { if (s.xn == null) return ""; const x = 42.5 - s.yn, y = 100 - s.xn;
+    if (s.outcome === "goal") return `<text x="${x}" y="${y + 2}" text-anchor="middle" font-size="7" fill="#C8A233" stroke="#08172B" stroke-width=".4">★</text>`;
+    if (s.outcome === "on_goal") return `<circle cx="${x}" cy="${y}" r="1.9" fill="#2E9E5B" stroke="#fff" stroke-width=".4"/>`;
+    if (s.outcome === "missed") return `<path d="M${x-1.7},${y-1.7}L${x+1.7},${y+1.7}M${x+1.7},${y-1.7}L${x-1.7},${y+1.7}" stroke="#C8323C" stroke-width=".8"/>`;
+    return `<rect x="${x-1.5}" y="${y-1.5}" width="3" height="3" fill="#8A9AA9"/>`; };
+  return `<div><h3>${esc(title)}</h3><svg viewBox="0 0 85 100">${m.svg}${shots.map(mk).join("")}</svg></div>`;
+}
+function tbl(head, rows, leftCols = 1) {
+  return `<div class="tw"><table><tr>${head.map((h, i) => `<th class="${i < leftCols ? "l" : ""}">${h}</th>`).join("")}</tr>${rows.map(r =>
+    `<tr>${r.map((c, i) => `<td class="${i < leftCols ? "l" : ""}">${c ?? ""}</td>`).join("")}</tr>`).join("")}</table></div>`;
+}
+function reportHtml(g, per) {
+  const S = computeStats(g, per), T = S.team, opp = esc(g.opp || "Opp");
+  const scoreAll = computeStats(g, 0).team;
+  const sk = S.players.filter(x => !x.goalie && (x.TOI > 0 || x.att || x.CF || x.CA || x.FOW || x.FOL || x.G || x.A || x.hits || x.PIM))
+    .sort((a, b) => (b.G + b.A) - (a.G + a.A) || b.TOI - a.TOI);
+  const gk = S.players.filter(x => x.goalie && (x.SA || x.TOI));
+  const nm = n => esc(((g.roster || []).find(p => +p.num === +n) || {}).name || "");
+  const pct = (a, b) => a + b ? (100 * a / (a + b)).toFixed(0) : "–";
+  const mm = s => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, "0")}`;
+  const label = per ? (per === 4 ? "Overtime" : "Period " + per) : "Full game so far";
+  return `<div class="big"><span class="n">${scoreAll.us.goals}</span> – ${scoreAll.them.goals} <span style="font-size:1rem;color:var(--slate)">${esc(gameTitle(g))}</span></div>
+  <div class="note">${label} · updated ${new Date().toLocaleTimeString([], {hour:"numeric", minute:"2-digit"})}</div>
+  <h2>Team · ${label}</h2>${tbl(["", "Navy", opp], [
+    ["Goals", T.us.goals, T.them.goals], ["Shots on goal", T.us.sog, T.them.sog], ["Shot attempts", T.us.att, T.them.att],
+    ["Shooting %", T.us.shpct, T.them.shpct], ["Missed / blocked", `${T.us.missed} / ${T.us.blocked}`, `${T.them.missed} / ${T.them.blocked}`],
+    ["Faceoffs", `${T.us.fo} (${T.us.fopct}%)`, `${T.them.fo} (${T.them.fopct}%)`],
+    ["FO OZ / NZ / DZ", ["OZ","NZ","DZ"].map(z => T.us.byZ[z]).join(" / "), ["OZ","NZ","DZ"].map(z => T.them.byZ[z]).join(" / ")],
+    ["Hits", T.us.hits, T.them.hits], ["PIM", T.us.pim, T.them.pim], ["Power plays (goals)", `${T.us.ppo} (${T.us.ppg})`, `${T.them.ppo} (${T.them.ppg})`]])}
+  <h2>Shot maps</h2><div class="maps">${shotMapSvg(S.shots.filter(x => x.team === "us"), "Navy")}${shotMapSvg(S.shots.filter(x => x.team === "them"), g.opp || "Opp")}</div>
+  <div class="legend">★ goal · ● on goal · ✕ missed · ■ blocked · net at top</div>
+  <h2>Shots by zone</h2>${S.zones.length ? tbl(["Team", "Zone", "Att", "On goal", "Goals", "On goal %", "Sh %"],
+    S.zones.map(z => [z.team === "us" ? "Navy" : opp, z.zone, z.att, z.og, z.gl, z.ogp, z.shp]), 2) : '<div class="note">No shot locations yet.</div>'}
+  <h2>Skaters</h2>${tbl(["#", "Name", "G", "A", "+/-", "SOG", "FO", "Hits", "PIM", "TOI", "Shifts", "CF%"],
+    sk.map(x => [x.num, nm(x.num), x.G, x.A, (x.pm > 0 ? "+" : "") + x.pm, x.SOG, x.FOW + x.FOL ? `${x.FOW}-${x.FOL}` : "", x.hits || "", x.PIM || "",
+      mm(x.TOI), x.shifts, pct(x.CF, x.CA)]), 2)}
+  <div class="note">TOI = ${S.hasFlow ? "time with play on (faceoff → whistle/goal)" : "includes stoppages (no faceoff/whistle tags)"}. CF% = share of all shot attempts that were Navy's while he was on. +/- skips power-play goals.</div>
+  ${gk.length ? `<h2>Goalies</h2>${tbl(["#", "Name", "Shots", "Saves", "GA", "SV%"], gk.map(x => [x.num, nm(x.num), x.SA, x.SA - x.GA, x.GA, x.SA ? ((x.SA - x.GA) / x.SA).toFixed(3) : "–"]), 2)}` : ""}`;
+}
+function renderReport() {
+  const S = computeStats(G, 0);
+  const pers = S.periods.length ? S.periods : [1];
+  if (repPer && !pers.includes(repPer)) repPer = 0;
+  $("#repPer").innerHTML = `<button class="btn small ${!repPer ? "on" : ""}" data-rp="0">Game</button>` +
+    pers.map(p => `<button class="btn small ${repPer === p ? "on" : ""}" data-rp="${p}">${p === 4 ? "OT" : "P" + p}</button>`).join("");
+  $$("[data-rp]").forEach(b => b.onclick = () => { repPer = +b.dataset.rp; renderReport(); });
+  $("#repBody").innerHTML = reportHtml(G, repPer);
+}
+function showReport() { if (!G) return; show("report"); renderReport(); }
+$("#hdrReport").onclick = () => $("#report").classList.contains("hidden") ? showReport() : (show("tag"), render());
+$("#repBack").onclick = () => { show("tag"); render(); };
+$("#repShare").onclick = () => {
+  const body = reportHtml(G, repPer);
+  let rules = []; try { rules = [...document.querySelector("style").sheet.cssRules]; } catch (e) {}
+  const css = rules.map(r => r.cssText).filter(t => /^(:root|\*|html|body|\.rep|h1|h2|h3)/.test(t)).join("\n");
+  const doc = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${esc(gameTitle(G))}</title><link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>${css}\nbody{padding:14px}</style></head><body><div class="rep">${body}</div></body></html>`;
+  const name = `${G.id}-report-${repPer ? (repPer === 4 ? "OT" : "P" + repPer) : "game"}.html`;
+  const file = new File([doc], name, { type: "text/html" });
+  if (navigator.canShare && navigator.canShare({ files: [file] }) && /Mobi|Android|iPhone|iPad/.test(navigator.userAgent))
+    navigator.share({ files: [file], title: gameTitle(G) }).catch(() => download(doc, name));
+  else download(doc, name);
+};
+window.tagStats = computeStats;      // used by the test suite
+
 /* ------------------------------------------------------------------ screens */
-function show(id) { for (const s of ["home","setup","tag"]) $("#" + s).classList.toggle("hidden", s !== id); window.scrollTo(0, 0);
+function show(id) { for (const s of ["home","setup","tag","report"]) $("#" + s).classList.toggle("hidden", s !== id); window.scrollTo(0, 0);
+  $("#hdrReport").classList.toggle("hidden", !(id === "tag" || id === "report"));
+  $("#hdrReport").textContent = id === "report" ? "TAGGING" : "REPORT";
   if (id !== "tag") { $("#hdrTitle").textContent = ""; } }
 
 function renderHome() {
@@ -816,7 +1046,7 @@ function renderHome() {
   $$("[data-open]").forEach(b => b.onclick = () => openGame(b.dataset.open));
   $$("[data-export]").forEach(b => b.onclick = () => exportGame(loadGame(b.dataset.export)));
 }
-function openGame(id) { const g = loadGame(id); if (!g) return toast("Couldn't load that game"); G = g; G.sync = G.sync || {};
+function openGame(id) { const g = loadGame(id); if (!g) return toast("Couldn't load that game"); G = g; G.sync = G.sync || {}; normOnIce(G);
   show("tag"); setupVideo(); render(); }
 
 /* -------- setup form -------- */
@@ -881,7 +1111,8 @@ $("#setupSave").onclick = () => {
     created: new Date().toISOString(), events: [], sync: {}, period: 1 };
   Object.assign(base, { team, date, opp, home: $("#sHome").value, our_color: $("#sColor").value, youtube: $("#sYT").value.trim(),
     tagger: $("#sTagger").value.trim(), lines, g1, g2, roster: teamRoster(team).length ? teamRoster(team) : base.roster || manualRoster(lines, g1, g2) });
-  base.onice = base.onice || { F: "F1", D: "D1", G: g1 };
+  if (!base.onice) base.onice = { slots: [...(lines.F1 || []).slice(0, 3), ...(lines.D1 || []).slice(0, 2)], G: g1 };
+  normOnIce(base);
   G = base; saveGame(); show("tag"); setupVideo(); render();
 };
 function manualRoster(lines, g1, g2) { const nums = new Set([...Object.values(lines).flat(), g1, g2].filter(Boolean));
@@ -897,7 +1128,7 @@ function exportGame(g) {
     navigator.share({ files: [file], title: name, text: "Navy hockey tags: " + gameTitle(g) }).catch(() => download(data, name));
   } else download(data, name);
 }
-function download(data, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([data], { type: "application/json" }));
+function download(data, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([data], { type: name.endsWith(".html") ? "text/html" : "application/json" }));
   a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
 $("#importBtn").onclick = () => $("#importFile").click();
 $("#importFile").onchange = async ev => {
