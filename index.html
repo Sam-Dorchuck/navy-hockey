@@ -169,6 +169,24 @@ section{padding:clamp(3.5rem,8vw,6rem) 0;border-top:1px solid var(--line)}
   gap:0 1.4rem;align-items:center;
   padding:1rem 0;border-bottom:1px solid var(--line);
 }
+/* marquee game — the one rivalry row that should stop the eye */
+.game.marquee{
+  background:linear-gradient(90deg, rgba(200,162,51,.14), rgba(200,162,51,0) 62%);
+  border-bottom-color:var(--gold);
+  padding-left:1rem;margin-left:-1rem;
+  box-shadow:inset 3px 0 0 var(--gold);
+}
+.game.marquee .g-opp{font-size:1.9rem}
+/* date stays at the base size — bumping it wraps two-digit dates in the
+   fixed 88px column. The opponent name carries the emphasis. */
+.g-tag{
+  font-family:"Barlow Condensed",sans-serif;font-size:.95rem;
+  letter-spacing:.1em;color:var(--gold);margin-bottom:.15rem;
+}
+@media (max-width:620px){
+  .game.marquee{padding-left:.75rem;margin-left:-.75rem}
+  .game.marquee .g-opp{font-size:1.5rem}
+}
 .g-date{font-family:"Barlow Condensed",sans-serif;font-size:1.5rem;color:var(--gold);line-height:1}
 .g-date small{display:block;font-size:.78rem;color:var(--slate);letter-spacing:.08em;font-family:"Barlow",sans-serif}
 .g-opp{font-family:"Barlow Condensed",sans-serif;font-size:1.5rem;font-weight:600}
@@ -521,9 +539,9 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
       <div class="order">
         <div>
           <h3>How to order</h3>
-          <p style="color:var(--rink);margin:.6rem 0 0">Email Kelly Teuschl with the item, size, color, and quantity you want, and she'll confirm availability and arrange payment and pickup.</p>
+          <p id="order-copy" style="color:var(--rink);margin:.6rem 0 0"></p>
         </div>
-        <div><a class="btn" href="mailto:kellyteuschl@gmail.com?subject=Navy%20Hockey%20merchandise%20order">Email Kelly to order</a></div>
+        <div id="order-cta"></div>
       </div>
     </div>
   </section>
@@ -660,7 +678,7 @@ const SCHEDULE = {
     {date:"2026-10-23", opp:"Rhode Island", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM", result:{w:true, score:"3-0"}},
     {date:"2026-10-24", opp:"Rhode Island", home:true, loc:"McMullen Arena, Annapolis", time:"5:30 PM", result:{w:false, score:"3-5"}},
     {date:"2026-10-30", opp:"Lehigh", home:false, loc:"Steel Ice Center, Bethlehem, PA", time:"7:45 PM"},
-    {date:"2026-10-31", opp:"William Paterson", home:false, loc:"Ice Vault Arena, Wayne, NJ", time:"TBD"},
+    {date:"2026-10-31", opp:"William Paterson", home:false, loc:"Ice Vault Arena, Wayne, NJ", time:"2:40 PM"},
     {date:"2026-11-06", opp:"Drexel", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM"},
     {date:"2026-11-07", opp:"Drexel", home:false, loc:"Class of 1923 Arena, Philadelphia, PA", time:"7:40 PM"},
     {date:"2026-11-13", opp:"Villanova", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM"},
@@ -669,6 +687,9 @@ const SCHEDULE = {
     {date:"2026-11-21", opp:"NC State", home:true, loc:"McMullen Arena, Annapolis", time:"5:30 PM"},
     {date:"2026-12-04", opp:"Temple", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM"},
     {date:"2026-12-05", opp:"West Chester", home:true, loc:"McMullen Arena, Annapolis", time:"5:30 PM"},
+    /* marquee:true gives a game the gold rivalry treatment in the ledger */
+    {date:"2026-12-11", opp:"Army", home:false, loc:"Tate Rink, West Point, NY", time:"5:30 PM",
+     marquee:true, tag:"Army\u2013Navy"},
     {date:"2027-01-22", opp:"Temple", home:false, loc:"Northeast Skate Zone, Philadelphia, PA", time:"9:00 PM"},
     {date:"2027-01-23", opp:"West Chester", home:false, loc:"Ice Line Quad Rinks, West Chester, PA", time:"6:00 PM"},
     {date:"2027-01-29", opp:"George Mason", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM"},
@@ -891,7 +912,10 @@ function renderSchedule(teamId){
     const row = el("div","game");
     row.appendChild(el("div","g-date", `${f.mon} ${f.day}<small>${f.wd}</small>`));
 
+    if(g.marquee) row.classList.add("marquee");
+
     const mid = el("div");
+    if(g.tag) mid.appendChild(el("div","g-tag", g.tag));
     mid.appendChild(el("div","g-opp",
       `<span class="g-ha ${g.home?'home':'away'}">${g.home?'H':'A'}</span>${g.opp}`));
     mid.appendChild(el("div","g-loc", g.loc));
@@ -909,6 +933,19 @@ function renderSchedule(teamId){
    Recomputes on load and every minute, so a page left open rolls over on its
    own: a game disappears once it's finished, and a "watch live" link appears
    in the window around puck drop. */
+/* Merchandise order form. Paste the Google Form link between the quotes and
+   every "order" button on the page switches to it. Left empty, the buttons
+   fall back to emailing Kelly, so the store always works. */
+const ORDER_FORM_URL = "";
+const ORDER_EMAIL    = "kellyteuschl@gmail.com";
+
+/* Where an order button should point. subject is used only by the mailto. */
+function orderLink(subject){
+  return ORDER_FORM_URL
+    ? ORDER_FORM_URL
+    : "mailto:" + ORDER_EMAIL + "?subject=" + encodeURIComponent(subject);
+}
+
 const LIVESTREAM = "https://www.youtube.com/channel/UCepE3NuI5iJhDDKrepIc34A";
 const PREGAME_HOURS = 4;    // stream link goes live this long before faceoff
 const GAME_HOURS    = 3;    // a game is considered over this long after faceoff
@@ -1102,6 +1139,22 @@ const STATUS = {
   soon:    {label:"Coming soon", note:"Coming soon"}
 };
 
+/* "How to order" panel — wording follows whichever route is configured */
+(function orderPanel(){
+  const copy = document.getElementById("order-copy");
+  const cta  = document.getElementById("order-cta");
+  if(!copy || !cta) return;
+  if(ORDER_FORM_URL){
+    copy.textContent = "Fill out the order form with the items, sizes, and quantities "
+      + "you want. Kelly Teuschl will confirm availability and arrange payment and pickup.";
+    cta.innerHTML = `<a class="btn" href="${ORDER_FORM_URL}">Open the order form</a>`;
+  } else {
+    copy.textContent = "Email Kelly Teuschl with the item, size, color, and quantity "
+      + "you want, and she'll confirm availability and arrange payment and pickup.";
+    cta.innerHTML = `<a class="btn" href="${orderLink("Navy Hockey merchandise order")}">Email Kelly to order</a>`;
+  }
+})();
+
 /* merch */
 (function renderMerch(){
   const mount = document.getElementById("merch-grid");   // NOT "merch" — that id belongs to the <section>
@@ -1263,10 +1316,12 @@ function slugify(s){
     else right.appendChild(el("p","sheet-empty","Sizes and details available on request."));
 
     const waiting = !!m.status;
-    const subject = encodeURIComponent((waiting ? "Navy Hockey restock: " : "Navy Hockey order: ") + m.name);
+    const href = orderLink((waiting ? "Navy Hockey restock: " : "Navy Hockey order: ") + m.name);
+    const label = ORDER_FORM_URL
+      ? (waiting ? "Join the waitlist" : "Order this")
+      : (waiting ? "Ask Kelly to let you know" : "Email Kelly to order");
     right.appendChild(el("p",null,
-      `<a class="btn${waiting ? " btn-ghost" : ""}" href="mailto:kellyteuschl@gmail.com?subject=${subject}">` +
-      (waiting ? "Ask Kelly to let you know" : "Email Kelly to order") + `</a>`));
+      `<a class="btn${waiting ? " btn-ghost" : ""}" href="${href}">${label}</a>`));
 
     body.innerHTML = "";
     body.appendChild(left); body.appendChild(right);
