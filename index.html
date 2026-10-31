@@ -677,7 +677,7 @@ const SCHEDULE = {
     {date:"2026-10-17", opp:"Towson", home:false, loc:"Ice World, Abingdon, MD", time:"8:00 PM", result:{w:true, score:"3-1"}},
     {date:"2026-10-23", opp:"Rhode Island", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM", result:{w:true, score:"3-0"}},
     {date:"2026-10-24", opp:"Rhode Island", home:true, loc:"McMullen Arena, Annapolis", time:"5:30 PM", result:{w:false, score:"3-5"}},
-    {date:"2026-10-30", opp:"Lehigh", home:false, loc:"Steel Ice Center, Bethlehem, PA", time:"7:45 PM"},
+    {date:"2026-10-30", opp:"Lehigh", home:false, loc:"Steel Ice Center, Bethlehem, PA", time:"7:45 PM", result:{w:false, score:"1-5"}},
     {date:"2026-10-31", opp:"William Paterson", home:false, loc:"Ice Vault Arena, Wayne, NJ", time:"2:40 PM"},
     {date:"2026-11-06", opp:"Drexel", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM"},
     {date:"2026-11-07", opp:"Drexel", home:false, loc:"Class of 1923 Arena, Philadelphia, PA", time:"7:40 PM"},
@@ -843,21 +843,23 @@ const GALLERY = [
            "soon"     -> "Coming soon"
    Remove the status line when an item is orderable again. */
 const MERCH = [
-  {name:"UA Youth Hoodie",          price:"$55", photo:"img/merch/ua-hoodie.jpg", status:"soldout"},
-  {name:"Full-Zip Sweatshirt",      price:"$55", photo:"img/merch/full-zip.png", status:"soon"},
-  {name:"UA Lightweight Hoodie",    price:"$50", photo:"img/merch/ua-lightweight-hoodie.png", status:"soon"},
+  {name:"Full-Zip Sweatshirt",      price:"$55", photo:"img/merch/full-zip.png"},
+  {name:"UA Lightweight Hoodie",    price:"$50", photo:"img/merch/ua-lightweight-hoodie.png"},
   {name:"UA Quarter-Zip",           price:"$50", photo:"img/merch/ua-quarter-zip.png.png"},
   {name:"Champion Crewneck",        price:"$40", photo:"img/merch/champion-crewneck.png.png"},
   {name:"UA Long Sleeve T-Shirt",   price:"$35", photo:"img/merch/ua-long-sleeve.png"},
   {name:"UA Short Sleeve T-Shirt",  price:"$30", photo:"img/merch/ua-short-sleeve.jpg"},
-  {name:"Blanket",                  price:"$75", photo:"img/merch/blanket.jpg", status:"soldout"},
+  {name:"Blanket",                  price:"$75", photo:"img/merch/blanket.jpg"},
   {name:"Trucker Hat",              price:"$25", photo:"img/merch/trucker-hat.png.png"},
   {name:"Classic Hat",              price:"$25", photo:"img/merch/classic-hat.png.png"},
   {name:"Beanie",                   price:"$25", photo:"img/merch/beanie.png.png"},
   {name:"Mittens",                  price:"$20", photo:"img/merch/mittens.png.png"},
   /* price not set yet — the tile and item page simply omit it until you add one */
   {name:"White Jersey",                          photo:"img/merch/white-jersey.png.png"},
-  {name:"Youth Jersey",                          photo:"img/merch/youth-jersey.png"}
+  {name:"Youth Jersey",                          photo:"img/merch/youth-jersey.png",
+   sizes:"Youth and adult sizes",
+   desc:"Available in both youth and adult sizes. Note that this is a lightweight jersey \u2014 thinner material than a game sweater, cut for wearing in the stands "
+        + "rather than on the ice."}
 ];
 
 const CONTACTS = [
