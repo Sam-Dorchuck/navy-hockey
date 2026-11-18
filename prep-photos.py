@@ -7,16 +7,16 @@ WHAT IT DOES
                      saves optimized JPEG to img/roster/
   Gallery photos   : resizes long edge to 1600px, strips EXIF,
                      saves optimized JPEG to img/gallery/
-  Then prints the exact lines to paste into index.html.
+  Then prints the exact lines to paste into js/data.js.
 
 HOW TO USE
   1. pip install pillow
   2. Drop originals into:
         img/raw/roster/     <- one file per player, named lastname.jpg
                                (use lastname-firstinitial.jpg for duplicates)
-        img/raw/gallery/    <- any filenames; captions are set in index.html
+        img/raw/gallery/    <- any filenames; captions are set in js/data.js
   3. python3 prep-photos.py
-  4. Paste the printed photo paths into the ROSTER block in index.html.
+  4. Paste the printed photo paths into the ROSTER block in js/data.js.
 
 NOTES
   - Headshots are cropped from the CENTER TOP (faces sit high in a 3:4 crop),
@@ -112,12 +112,12 @@ if __name__ == "__main__":
     gal   = run(RAW_GALLERY, OUT_GALLERY, do_gallery, "gallery photos")
 
     if shots:
-        print("\nRoster photo paths — match these to players in index.html:")
+        print("\nRoster photo paths — match these to players in js/data.js:")
         for p in shots:
             print(f'    photo:"{p}"')
 
     if gal:
-        print("\nGallery block — paste into index.html, then write real captions:")
+        print("\nGallery block — paste into js/data.js, then write real captions:")
         print("const GALLERY = [")
         for p in gal:
             print(f'  {{src:"{p}", cap:"CAPTION HERE"}},')

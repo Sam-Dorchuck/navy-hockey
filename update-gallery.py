@@ -4,16 +4,16 @@ update-gallery.py — point the carousel at whatever is actually in img/gallery/
 
 The site is a static file, so it cannot look inside a folder by itself. This
 script does it for you: it scans img/gallery/, rewrites the GALLERY list inside
-index.html, and KEEPS any captions you have already written.
+js/data.js, and KEEPS any captions you have already written.
 
 USAGE
-    python3 update-gallery.py            # rewrite index.html
+    python3 update-gallery.py            # rewrite js/data.js
     python3 update-gallery.py --print    # just show the block, change nothing
 
 WORKFLOW
     1. Put photos in img/gallery/ (or run prep-photos.py first to resize them).
     2. Run this.
-    3. Open index.html, find the GALLERY block, and replace "CAPTION HERE"
+    3. Open js/data.js, find the GALLERY block, and replace "CAPTION HERE"
        with real captions. Re-running later will not overwrite them.
 
 Photos appear in filename order, so if you want a specific sequence, prefix
@@ -23,7 +23,7 @@ them: 01-drexel.jpg, 02-crabpot.jpg, and so on.
 import os, re, sys
 
 GALLERY_DIR = "img/gallery"
-HTML = "index.html"
+HTML = "js/data.js"
 EXTS = (".jpg", ".jpeg", ".png", ".webp", ".JPG", ".JPEG", ".PNG", ".WEBP")
 
 
@@ -50,7 +50,7 @@ def existing_captions(html):
 
 def main():
     if not os.path.isdir(GALLERY_DIR):
-        sys.exit(f"No {GALLERY_DIR}/ folder found. Run this from the folder that contains index.html.")
+        sys.exit(f"No {GALLERY_DIR}/ folder found. Run this from the site folder (the one with index.html and js/).")
 
     files = sorted(f for f in os.listdir(GALLERY_DIR) if f.endswith(EXTS))
     if not files:
@@ -77,7 +77,7 @@ def main():
         return
 
     if "const GALLERY = [" not in html:
-        sys.exit("Could not find the GALLERY block in index.html.")
+        sys.exit("Could not find the GALLERY block in js/data.js.")
 
     html = re.sub(r"const GALLERY = \[.*?\n\];", block, html, flags=re.S)
     open(HTML, "w", encoding="utf-8").write(html)
@@ -88,7 +88,7 @@ def main():
     if reused:
         print(f"  {reused} existing captions kept.")
     if todo:
-        print(f"  {todo} still say CAPTION HERE — edit those in index.html.")
+        print(f"  {todo} still say CAPTION HERE — edit those in js/data.js.")
 
 
 if __name__ == "__main__":

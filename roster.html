@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roster — Navy Hockey</title>
+<meta name="description" content="Navy Hockey rosters and coaching staff for Men's D1, Men's D3 and Women's D2.">
+<link rel="icon" href="img/navy-n-star.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body data-page="roster">
+<div id="site-header"></div>
+
+<main id="top">
+  <div class="pagehead">
+    <div class="shell">
+      <div class="kicker">2026–27 Midshipmen</div>
+      <h1>Roster</h1>
+      <p>Every player carries a full academic load, a company assignment, and a service selection ahead of them.</p>
+    </div>
+  </div>
+
+<section id="roster">
+    <div class="shell">
+      <div class="teams" id="roster-teams" role="group" aria-label="Choose a team roster"></div>
+      <div class="wall" id="wall"></div>
+      <div class="staff" id="staff"></div>
+    </div>
+  </section>
+</main>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+  <div class="sheet-scrim" data-close></div>
+  <div class="sheet-panel">
+    <button class="sheet-close" aria-label="Close">&#10005;</button>
+    <div class="sheet-body" id="sheet-body"></div>
+  </div>
+</div>
+<div id="site-footer"></div>
+<script src="js/data.js"></script>
+<script src="js/site.js"></script>
+</body>
+</html>

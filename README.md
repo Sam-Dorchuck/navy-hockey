@@ -1,17 +1,27 @@
 # Navy Hockey site — maintenance guide
 
-Everything lives in `index.html`. There is no build step, no framework, and no
-database. To update the site you edit one block of data near the bottom of that
-file and re-upload it.
+The site is plain HTML/CSS/JS on GitHub Pages: no build step, no framework, no
+database. **All content lives in `js/data.js`** (schedule and results, rosters,
+staff, gallery, merch, contacts, links). Every page reads from it, so updating
+the site means editing that one file and pushing.
 
 ## Files
 
 ```
-index.html        the entire site
+index.html        home page (Men's D1 first) — fills itself in from data.js
+schedule.html     schedule & results (?team=md3 / ?team=wd2 for the other teams)
+roster.html       rosters + staff (player pages: roster.html#player-<name>)
+photos.html       gallery slideshow
+store.html        team store (item pages: store.html#item-<name>)
+support.html      Friends of Navy Hockey giving
+future-mids.html  prospective players
+js/data.js        ALL CONTENT — the only file you normally edit
+js/site.js        shared header/footer + rendering (no need to edit)
+css/site.css      shared styles
 prep-photos.py    batch photo processor (run it, don't edit it)
 notify-orders.gs  emails Sammy + Kelly on every merch order (setup steps in the file)
 img/
-  navy-n-star.png the logo (also embedded in index.html)
+  navy-n-star.png the logo (header, favicon)
   raw/roster/     ORIGINAL headshots — archive, do not upload to the host
   raw/gallery/    ORIGINAL action photos — archive, do not upload
   roster/         processed headshots (generated)
@@ -27,7 +37,7 @@ img/
    `img/raw/gallery/` with any filename.
 2. Run `python3 prep-photos.py` (needs `pip install pillow`).
 3. Paste the printed paths into the `ROSTER` and `GALLERY` blocks in
-   `index.html`.
+   `js/data.js`.
 
 The script crops headshots to the 3:4 tile shape, resizes gallery images down
 to a web-appropriate size, and **strips EXIF metadata** — phone photos embed GPS
@@ -54,7 +64,7 @@ have a shared drive full of usable images.
 
 ## Updating the schedule
 
-In `index.html`, find `const SCHEDULE`. Each game:
+In `js/data.js`, find `const SCHEDULE`. Each game:
 
 ```js
 {date:"2026-10-17", opp:"Lehigh", home:true,
@@ -62,8 +72,9 @@ In `index.html`, find `const SCHEDULE`. Each game:
 ```
 
 Add `result:{w:true, score:"5-2"}` once a game is played, and the row switches
-from a start time to a W/L line automatically. The "next home game" banner at
-the top recalculates itself from this data — no separate edit needed.
+from a start time to a W/L line automatically. The home page's next-game card,
+record, last-four results, Army–Navy countdown (any game with `marquee:true`)
+and upcoming home games all recalculate from this data — no separate edit.
 
 ## Updating the roster
 
@@ -74,11 +85,11 @@ Find `const ROSTER`. Each player:
  home:"Buffalo, NY", photo:"img/roster/ferraro.jpg"},
 ```
 
-## Before it goes live
+## Still to fill in
 
-- Replace every `_HERE` placeholder: `OREP_EMAIL_HERE`, `COACH_EMAIL_HERE`,
-  `DONATE_URL_HERE`, `INSTAGRAM_URL_HERE`, `NAME HERE`.
-- Confirm the giving link and the check-mailing instructions with whoever
+- `DONATE_URL` in `js/data.js` (until it's set, Give buttons email the O-Rep).
+- `NAME HERE` / `COACH_EMAIL_HERE` for the D3 and Women's D2 coaches in `js/data.js`.
+- Confirm the check-mailing instructions on the Support page with whoever
   handles the club's funds.
 - Have the O-Rep and PAO review the roster fields. Publishing midshipman names
   with hometowns and company assignments is normal for a roster, but it is a

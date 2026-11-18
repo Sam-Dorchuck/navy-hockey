@@ -20,7 +20,7 @@
  */
 
 var FORM_NAME = 'Navy Hockey Merchandise Order';
-var SITE_URL  = 'https://usnahockey.com/';
+var SITE_URL  = 'https://usnahockey.com/js/data.js';   // the site's data file
 var QUESTION  = 'What would you like to order?';
 
 function syncOrderForm() {
@@ -36,7 +36,7 @@ function syncOrderForm() {
   Logger.log('\nForm: ' + form.getPublishedUrl());
 }
 
-/** Pull the store list straight out of the live page. */
+/** Pull the store list straight out of the live site's data file. */
 function readStoreFromSite_() {
   var res = UrlFetchApp.fetch(SITE_URL, { muteHttpExceptions: true });
   if (res.getResponseCode() !== 200) {
@@ -47,7 +47,7 @@ function readStoreFromSite_() {
   var block = res.getContentText().match(/const MERCH = \[([\s\S]*?)\n\];/);
   if (!block) {
     throw new Error('Loaded the site but could not find the store list on it. ' +
-                    'If index.html was restructured, this script needs updating.');
+                    'If js/data.js was restructured, this script needs updating.');
   }
 
   var choices = [];
