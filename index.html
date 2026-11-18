@@ -16,8 +16,9 @@
 <!--
   HOMEPAGE. Almost everything here fills itself in from js/data.js:
   next game, record, last four results, Army–Navy countdown (any game with
-  marquee:true), upcoming home games, four random D1 players, four store items.
-  The only hand-set things are the three photos and the headline copy.
+  marquee:true), upcoming home games, the full D1 roster, four store items,
+  and the rotating headline (HERO_SAYINGS).
+  The only hand-set things are the three photos and the intro line.
 -->
 <div id="site-header"></div>
 
@@ -30,8 +31,8 @@
       <div class="h-split">
         <div>
           <div class="kicker">Navy Men's Ice Hockey · ACHA Division I</div>
-          <h1>Stay out of<br>our house.</h1>
-          <p class="lead">Home ice is McMullen Arena at the Brigade Sports Complex. Mids get in free, and every home game streams live.</p>
+          <h1 id="hero-say" aria-live="off">Don't give up the ship.</h1>
+          <p class="lead">Home ice is <a href="rink.html">McMullen Arena</a> at the Brigade Sports Complex. Mids get in free, and every home game streams live.</p>
           <div class="btn-row">
             <a class="btn btn-lg" href="schedule.html">Full schedule</a>
             <a class="btn btn-ghost btn-lg on-photo" data-live href="#">Watch live</a>
@@ -68,7 +69,7 @@
           <div class="when" id="rv-when"></div>
           <div class="countdown" id="cd" aria-live="off"></div>
           <div class="btn-row">
-            <a class="btn btn-lg" data-live href="#">Watch live</a>
+            <a class="btn btn-lg" id="rv-watch" data-live href="#">Watch live</a>
             <a class="btn btn-ghost btn-lg" href="schedule.html">Full schedule</a>
           </div>
         </div>
@@ -103,9 +104,9 @@
     <div class="shell">
       <div class="h-head">
         <h2>Meet the Midshipmen</h2>
-        <a class="more" href="roster.html">Full D1 roster →</a>
+        <a class="more" href="roster.html">All teams &amp; staff →</a>
       </div>
-      <div class="g4" id="spot"></div>
+      <div class="wall" id="home-wall" style="margin-top:1.75rem"></div>
     </div>
   </section>
 

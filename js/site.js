@@ -27,7 +27,8 @@ const PAGE = document.body.dataset.page || "home";
     ["future-mids","future-mids.html","Future Mids"],
     ["store","store.html","Store"],
     ["support","support.html","Support"],
-    ["photos","photos.html","Photos"]
+    ["photos","photos.html","Photos"],
+    ["rink","rink.html","The Rink"]
   ];
   const team = new URLSearchParams(location.search).get("team") || "md1";
   const teamHref = id => {
@@ -71,7 +72,7 @@ const PAGE = document.body.dataset.page || "home";
   <div class="shell">
     <div class="foot">
       <div>
-        <h4>The rink</h4>
+        <h4><a href="rink.html">The rink</a></h4>
         <p>John J. McMullen Hockey Arena</p>
         <p>Brigade Sports Complex</p>
         <p>64 Greenbury Point Road</p>
@@ -127,6 +128,8 @@ function faceoff(g){
 }
 const isOver = g => !!g.result || Date.now() > faceoff(g).getTime() + GAME_HOURS*3600e3;
 const isLive = g => !g.result && Date.now() >= faceoff(g).getTime() - PREGAME_HOURS*3600e3 && !isOver(g);
+/* where to watch a game: its own stream link, else ours for home games */
+const streamFor = g => g.stream || (g.home ? LIVESTREAM : "");
 const mapsLink = loc => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(loc);
 function gcalLink(g, teamName){
   const s = faceoff(g), e = new Date(s.getTime() + 2.5*3600e3);
@@ -136,7 +139,7 @@ function gcalLink(g, teamName){
     + "&text=" + encodeURIComponent(title)
     + "&dates=" + p(s) + "/" + p(e) + "&ctz=America/New_York"
     + "&location=" + encodeURIComponent(g.loc)
-    + "&details=" + encodeURIComponent("Livestream: " + LIVESTREAM);
+    + (streamFor(g) ? "&details=" + encodeURIComponent("Livestream: " + streamFor(g)) : "");
 }
 const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const el = (t,c,h)=>{const n=document.createElement(t); if(c)n.className=c; if(h!=null)n.innerHTML=h; return n;};
@@ -185,23 +188,51 @@ function renderSchedule(teamId){
     mount.appendChild(el("p","g-loc","Schedule for this team hasn't been posted yet."));
     return;
   }
+
+  /* record summary */
+  const done = games.filter(g=>g.result);
+  if(done.length){
+    const rec = list => { const w = list.filter(g=>g.result.w).length; return `${w}–${list.length-w}`; };
+    let n = 0; const last = done[done.length-1].result.w;
+    for(let i=done.length-1;i>=0 && done[i].result.w===last;i--) n++;
+    const streak = last ? (n>1 ? `${n} game win streak!` : "Won last game") : (n>1 ? `Lost last ${n}` : "Lost last game");
+    mount.appendChild(el("div","s-sum",`
+      <div><small>Overall</small><b>${rec(done)}</b></div>
+      <div><small>Home</small><b>${rec(done.filter(g=>g.home))}</b></div>
+      <div><small>Away</small><b>${rec(done.filter(g=>!g.home))}</b></div>
+      <div class="s-streak ${last?"w":"l"}"><small>Streak</small><b>${streak}</b></div>`));
+  }
+
+  const nextG = games.filter(g=>!isOver(g)).sort((x,y)=>faceoff(x)-faceoff(y))[0];
+  let month = "";
   games.forEach(g=>{
     const f = fmt(g.date);
-    const row = el("div","game");
+    const m = f.d.toLocaleDateString("en-US",{month:"long", year:"numeric"});
+    if(m !== month){ month = m; mount.appendChild(el("div","g-month", m)); }
+
+    const row = el("div","game " + (g.home ? "is-home" : "is-away"));
+    if(g.result) row.classList.add(g.result.w ? "is-w" : "is-l");
+    if(g.marquee) row.classList.add("marquee");
+    if(g === nextG) row.classList.add("is-next");
     row.appendChild(el("div","g-date", `${f.mon} ${f.day}<small>${f.wd}</small>`));
 
-    if(g.marquee) row.classList.add("marquee");
-
     const mid = el("div");
-    if(g.tag) mid.appendChild(el("div","g-tag", g.tag));
+    const tags = [];
+    if(g === nextG) tags.push(isLive(g) ? 'Live now <span class="live-dot"></span>' : "Next game");
+    if(g.tag) tags.push(g.tag);
+    if(tags.length) mid.appendChild(el("div","g-tag", tags.join(" · ")));
     mid.appendChild(el("div","g-opp",
-      `<span class="g-ha ${g.home?'home':'away'}">${g.home?'H':'A'}</span>${g.opp}`));
+      `<span class="g-ha ${g.home?'home':'away'}">${g.home?'H':'A'}</span>${g.home?"":'<span class="g-at">at</span> '}${g.opp}`));
     mid.appendChild(el("div","g-loc", g.loc));
     row.appendChild(mid);
 
-    const right = g.result
-      ? el("div","g-right", `<span class="${g.result.w?'w':'l'}">${g.result.w?'W':'L'} ${g.result.score}</span>`)
-      : el("div","g-right", `<span class="time">${g.time||"TBD"}</span>`);
+    let right;
+    if(g.result){
+      right = el("div","g-right", `<span class="g-chip ${g.result.w?'w':'l'}">${g.result.w?'W':'L'}</span><span class="g-score">${g.result.score.replace("-","–")}</span>`);
+    } else {
+      const watch = streamFor(g) ? `<a class="g-watch" href="${streamFor(g)}">${isLive(g) ? "Watch live" : "Stream"}</a>` : "";
+      right = el("div","g-right", `<span class="time">${g.time||"TBD"}</span>${watch}`);
+    }
     row.appendChild(right);
     mount.appendChild(row);
   });
@@ -563,13 +594,13 @@ function slugify(s){
 (function nav(){
   const btn = document.querySelector(".navtoggle");
   const menu = document.getElementById("topnav");
-  const sync = ()=>{ if(window.innerWidth>780){ menu.hidden=false; btn.setAttribute("aria-expanded","false"); } else { menu.hidden=true; } };
+  const sync = ()=>{ if(window.innerWidth>1200){ menu.hidden=false; btn.setAttribute("aria-expanded","false"); } else { menu.hidden=true; } };
   btn.addEventListener("click", ()=>{
     const open = !menu.hidden;
     menu.hidden = open;
     btn.setAttribute("aria-expanded", String(!open));
   });
-  menu.addEventListener("click", e=>{ if(e.target.tagName==="A" && window.innerWidth<=780) menu.hidden = true; });
+  menu.addEventListener("click", e=>{ if(e.target.tagName==="A" && window.innerWidth<=1200) menu.hidden = true; });
   window.addEventListener("resize", sync);
   sync();
 })();
@@ -605,8 +636,8 @@ function slugify(s){
       <div class="ng-vs">Navy <span>${g.home?"vs":"at"}</span> ${esc(g.opp)}</div>
       <div class="ng-where">${esc(g.loc)}</div>
       <div class="btn-row">
-        ${live
-          ? `<a class="btn btn-lg" href="${LIVESTREAM}">Watch live</a>`
+        ${live && streamFor(g)
+          ? `<a class="btn btn-lg" href="${streamFor(g)}">Watch live</a>`
           : `<a class="btn btn-lg" href="${gcalLink(g, d1name)}">Add to calendar</a>`}
         <a class="btn btn-ghost btn-lg" href="${mapsLink(g.loc)}">Directions</a>
       </div>
@@ -622,7 +653,9 @@ function slugify(s){
     const w = done.filter(g=>g.result.w).length, l = done.length - w;
     let n = 0; const last = done[done.length-1].result.w;
     for(let i=done.length-1;i>=0 && done[i].result.w===last;i--) n++;
-    const streak = n>1 ? `${last?"Won":"Lost"} last ${n}` : `${last?"Won":"Lost"} last game`;
+    const streak = last
+      ? (n>1 ? `${n} game win streak!` : "Won last game")
+      : (n>1 ? `Lost last ${n}` : "Lost last game");
     document.getElementById("rec-big").textContent = `${w}–${l}`;
     document.getElementById("rec-streak").textContent = streak;
     document.getElementById("lastn").innerHTML = done.slice(-4).reverse().map(g=>`
@@ -640,6 +673,8 @@ function slugify(s){
     const g = D1.filter(x=>x.marquee && !isOver(x)).sort((a,b)=>faceoff(a)-faceoff(b))[0];
     if(!g){ sec.hidden = true; return; }
     document.getElementById("rv-title").textContent = g.tag || `Navy vs ${g.opp}`;
+    const w = document.getElementById("rv-watch");
+    if(w){ if(streamFor(g)) w.href = streamFor(g); else w.hidden = true; }
     document.getElementById("rv-when").textContent =
       `${dayFmt(faceoff(g))} · ${g.time||"TBD"} · ${g.loc.replace(/, [A-Z]{2}$/,"")}`;
     const tick = ()=>{
@@ -666,23 +701,43 @@ function slugify(s){
       </div>`; }).join("");
   })();
 
-  /* four D1 players — random each visit, only ones whose headshot actually loads */
-  (function spotlight(){
-    const box = document.getElementById("spot");
+  /* the whole D1 roster — same tiles as the Roster page; tiles open the player page */
+  (function wall(){
+    const box = document.getElementById("home-wall");
     if(!box) return;
-    const pool = (ROSTER.md1||[]).filter(p=>p.photo).sort(()=>Math.random()-.5).slice(0,10);
-    Promise.all(pool.map(p=>new Promise(res=>{
-      const im = new Image(); im.onload = ()=>res(p); im.onerror = ()=>res(null); im.src = p.photo;
-    }))).then(ok=>{
-      const four = ok.filter(Boolean).slice(0,4);
-      if(!four.length){ box.closest("section").hidden = true; return; }
-      const pos = x => x==="G"?"G":x==="D"?"D":"F";
-      box.innerHTML = four.map(p=>`
-        <a class="pcard" href="roster.html#player-${slugify(p.name)}">
-          <div class="ph"><img src="${p.photo}" alt="${esc(p.name)}" loading="lazy"><div class="num">${p.num}</div></div>
-          <div class="tx"><b>${esc(p.name)}</b><small>${pos(p.pos)} · Class of ${p.yr}${p.home ? " · " + esc(p.home) : ""}</small></div>
-        </a>`).join("");
+    (ROSTER.md1||[]).forEach(p=>{
+      const card = el("a","player");
+      card.href = "roster.html#player-" + slugify(p.name);
+      card.setAttribute("aria-label", `${p.name}, number ${p.num}`);
+      const img = el("img");
+      img.loading = "lazy"; img.decoding = "async";
+      img.src = p.photo || ""; img.alt = `${p.name}, #${p.num}`;
+      img.addEventListener("error", ()=>card.classList.add("no-photo"));
+      if(!p.photo) card.classList.add("no-photo");
+      card.appendChild(img);
+      card.appendChild(el("div","p-num", String(p.num)));
+      if(p.letter) card.appendChild(el("div","p-letter", p.letter));
+      const info = el("div","p-info");
+      info.appendChild(el("div","p-name", esc(p.name)));
+      info.appendChild(el("div","p-meta", `${p.pos} · Class of ${p.yr}`));
+      if(p.home) info.appendChild(el("div","p-home", esc(p.home)));
+      card.appendChild(info);
+      box.appendChild(card);
     });
+  })();
+
+  /* rotating headline (HERO_SAYINGS in data.js) */
+  (function sayings(){
+    const h = document.getElementById("hero-say");
+    const list = (typeof HERO_SAYINGS !== "undefined" && HERO_SAYINGS.length) ? HERO_SAYINGS : null;
+    if(!h || !list) return;
+    let i = 0;
+    h.textContent = list[0];
+    if(list.length < 2 || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    setInterval(()=>{
+      h.classList.add("out");
+      setTimeout(()=>{ i = (i+1) % list.length; h.textContent = list[i]; h.classList.remove("out"); }, 450);
+    }, 5000);
   })();
 
   /* four orderable store items */

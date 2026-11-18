@@ -15,6 +15,7 @@ photos.html       gallery slideshow
 store.html        team store (item pages: store.html#item-<name>)
 support.html      Friends of Navy Hockey giving
 future-mids.html  prospective players
+rink.html         McMullen Arena / Brigade Sports Complex
 js/data.js        ALL CONTENT — the only file you normally edit
 js/site.js        shared header/footer + rendering (no need to edit)
 css/site.css      shared styles
@@ -87,6 +88,8 @@ Find `const ROSTER`. Each player:
 
 ## Still to fill in
 
+- Homepage headline: edit `HERO_SAYINGS` in `js/data.js` (it rotates).
+- Per-game livestream: add `stream:"https://…"` to a game (used for away games).
 - `DONATE_URL` in `js/data.js` (until it's set, Give buttons email the O-Rep).
 - `NAME HERE` / `COACH_EMAIL_HERE` for the D3 and Women's D2 coaches in `js/data.js`.
 - Confirm the check-mailing instructions on the Support page with whoever

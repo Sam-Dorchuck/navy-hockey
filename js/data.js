@@ -13,7 +13,11 @@ const TEAMS = [
 
 /* --- SCHEDULE ------------------------------------------------
    date: ISO "YYYY-MM-DD".  home: true/false.
-   result: omit for upcoming games; otherwise {w:true, score:"4-2"} */
+   result: omit for upcoming games; otherwise {w:true, score:"4-2"}
+   stream: optional livestream link for that game (e.g. the home team's
+           channel for an away game). Home games default to our LIVESTREAM;
+           away games without one show no Watch link.
+   marquee:true + tag:"…": rivalry treatment + homepage countdown. */
 const SCHEDULE = {
   /* 2026-27 season. Add result:{w:true, score:"4-2"} to a game once played
      and the row switches from a start time to a W/L line automatically. */
@@ -39,7 +43,7 @@ const SCHEDULE = {
     {date:"2026-12-05", opp:"West Chester", home:true, loc:"McMullen Arena, Annapolis", time:"5:30 PM"},
     /* marquee:true gives a game the gold rivalry treatment in the ledger */
     {date:"2026-12-11", opp:"Army", home:false, loc:"Tate Rink, West Point, NY", time:"5:30 PM",
-     marquee:true, tag:"Army\u2013Navy"},
+     marquee:true, tag:"Army\u2013Navy", stream:"https://www.youtube.com/@armyclubhockey1840/streams"},
     {date:"2027-01-22", opp:"Temple", home:false, loc:"Northeast Skate Zone, Philadelphia, PA", time:"9:00 PM"},
     {date:"2027-01-23", opp:"West Chester", home:false, loc:"Ice Line Quad Rinks, West Chester, PA", time:"6:00 PM"},
     {date:"2027-01-29", opp:"George Mason", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM"},
@@ -258,3 +262,15 @@ const OREP_EMAIL = "dorchuck@usna.edu";
 /* Giving link for Friends of Navy Hockey. Leave "" until it's confirmed;
    the Give buttons then point to the Support page instead of a dead link. */
 const DONATE_URL = "";
+
+/* Homepage headline. The hero rotates through these every few seconds
+   (first one shows on load). Add, remove or reorder freely. */
+const HERO_SAYINGS = [
+  "Don't give up the ship.",
+  "Beat Army.",
+  "Anchors aweigh.",
+  "Fly Navy.",
+  "Semper Fidelis.",
+  "The Frozen Chosen.",
+  "Damn the torpedoes."
+];

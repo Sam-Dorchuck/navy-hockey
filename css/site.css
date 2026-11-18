@@ -14,10 +14,14 @@
   --rink:#C3D4E0;
   --slate:#8A9AA9;
   --line:rgba(195,212,224,.18);
-  --shell:min(1180px, 92vw);
+  --shell:min(84rem, 94vw);
 }
 
 *{box-sizing:border-box}
+/* The whole site scales with the screen: ~16px on small laptops/phones,
+   growing to ~22px on a 1440 display and capped at 24px. Everything is
+   sized in rem, so this one line sets the overall zoom. */
+html{font-size:clamp(16px, calc(1.36vw + 2.4px), 24px)}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
 
@@ -26,7 +30,7 @@ body{
   background:var(--navy-900);
   color:var(--ice);
   font-family:"Barlow",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  font-size:17px;
+  font-size:1.0625rem;
   line-height:1.6;
   -webkit-font-smoothing:antialiased;
 }
@@ -45,7 +49,7 @@ img{display:block;max-width:100%}
   backdrop-filter:blur(8px);
   border-bottom:1px solid var(--line);
 }
-.topbar .shell{display:flex;align-items:center;gap:1.5rem;height:64px}
+.topbar .shell{display:flex;align-items:center;gap:1.5rem;height:4rem}
 .mark{display:flex;align-items:center;height:100%;padding:.5rem 0}
 .mark:hover{text-decoration:none}
 .mark .logo{height:100%;width:auto;flex:none}
@@ -61,10 +65,10 @@ img{display:block;max-width:100%}
 .topnav a{color:var(--rink)}
 .topnav a:hover{color:var(--gold-lt);text-decoration:none}
 .navtoggle{display:none;margin-left:auto;background:none;border:1px solid var(--line);color:var(--ice);border-radius:3px;padding:.4rem .7rem;font:inherit}
-@media (max-width:780px){
+@media (max-width:1200px){
   .navtoggle{display:block}
   .topnav{
-    position:absolute;top:64px;left:0;right:0;margin:0;
+    position:absolute;top:4.5rem;left:0;right:0;margin:0;
     flex-direction:column;gap:0;
     background:var(--navy-800);border-bottom:1px solid var(--line);
   }
@@ -103,7 +107,7 @@ section{padding:clamp(3.5rem,8vw,6rem) 0;border-top:1px solid var(--line)}
 .ledger{border-top:1px solid var(--line)}
 .game{
   display:grid;
-  grid-template-columns:88px 1fr auto;
+  grid-template-columns:5.5rem 1fr auto;
   gap:0 1.4rem;align-items:center;
   padding:1rem 0;border-bottom:1px solid var(--line);
 }
@@ -141,14 +145,14 @@ section{padding:clamp(3.5rem,8vw,6rem) 0;border-top:1px solid var(--line)}
 .g-right .l{color:var(--slate)}
 .g-right .time{color:var(--rink)}
 @media (max-width:620px){
-  .game{grid-template-columns:70px 1fr;row-gap:.35rem}
+  .game{grid-template-columns:4.4rem 1fr;row-gap:.35rem}
   .g-right{grid-column:2;text-align:left;font-size:1.15rem}
 }
 
 /* ---------- roster wall ---------- */
 .wall{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+  grid-template-columns:repeat(auto-fill,minmax(11.5rem,1fr));
   gap:1px;background:var(--line);border:1px solid var(--line);
 }
 .player{position:relative;background:var(--navy-800);aspect-ratio:3/4;overflow:hidden;display:block;color:inherit;text-decoration:none}
@@ -206,7 +210,7 @@ section{padding:clamp(3.5rem,8vw,6rem) 0;border-top:1px solid var(--line)}
 .cap-count{margin-left:auto;flex:none;font-family:"Barlow Condensed",sans-serif;font-size:1.15rem;color:var(--gold)}
 .arrow{
   position:absolute;top:50%;transform:translateY(-50%);
-  width:46px;height:64px;display:grid;place-items:center;
+  width:2.9rem;height:4rem;display:grid;place-items:center;
   background:rgba(8,23,43,.55);border:1px solid var(--line);
   color:var(--ice);cursor:pointer;font-size:1.4rem;line-height:1;
 }
@@ -215,7 +219,7 @@ section{padding:clamp(3.5rem,8vw,6rem) 0;border-top:1px solid var(--line)}
 .arrow.next{right:0}
 .thumbs{display:flex;gap:8px;margin-top:8px;overflow-x:auto;padding-bottom:4px}
 .thumbs button{
-  flex:none;width:118px;aspect-ratio:16/9;padding:0;cursor:pointer;
+  flex:none;width:7.4rem;aspect-ratio:16/9;padding:0;cursor:pointer;
   border:1px solid var(--line);background:var(--navy-800);opacity:.5;
 }
 .thumbs button img{width:100%;height:100%;object-fit:cover}
@@ -234,7 +238,7 @@ section{padding:clamp(3.5rem,8vw,6rem) 0;border-top:1px solid var(--line)}
 /* ---------- merch ---------- */
 /* Merch uses the roster's .wall grid verbatim. The only override is a
    slightly larger minimum track, since there are ~12 items, not 25. */
-.wall-merch{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+.wall-merch{grid-template-columns:repeat(auto-fill,minmax(13.5rem,1fr))}
 .item{position:relative;background:var(--navy-800);display:block;color:inherit;text-decoration:none}
 .item:hover{text-decoration:none}
 .item::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 0 var(--gold);transition:box-shadow .15s;pointer-events:none}
@@ -358,7 +362,7 @@ section{padding:clamp(3.5rem,8vw,6rem) 0;border-top:1px solid var(--line)}
 
 /* ---------- footer ---------- */
 footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
-.foot{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:2rem}
+.foot{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:2rem}
 .foot h4{font-family:"Barlow Condensed",sans-serif;font-size:1.15rem;color:var(--gold);margin:0 0 .5rem;font-weight:600}
 .foot p,.foot li{color:var(--slate);font-size:.92rem;margin:.2rem 0}
 .foot ul{list-style:none;padding:0;margin:0}
@@ -368,26 +372,26 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
    MULTI-PAGE SHELL (header, program bar, page banners)
    ============================================================ */
 .progbar{background:#050F1D;border-bottom:1px solid rgba(195,212,224,.12)}
-.progbar .shell{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:38px;flex-wrap:wrap}
+.progbar .shell{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:2.4rem;flex-wrap:wrap}
 .progbar nav{display:flex;gap:1.4rem;font-family:"Barlow Condensed",sans-serif;font-size:.95rem;letter-spacing:.08em;text-transform:uppercase}
 .progbar nav a{color:#A9B7C4}
 .progbar nav a[aria-current="true"]{color:var(--gold-lt);font-weight:600}
 .progbar .social{display:flex;gap:1.1rem;font-size:.88rem}
 @media (max-width:620px){.progbar .social{display:none}}
 
-.topbar .shell{height:72px}
+.topbar .shell{height:4.5rem}
 .mark{gap:.8rem}
-.mark img{height:46px;width:auto}
+.mark img{height:2.9rem;width:auto}
 .mark-text{font-family:"Barlow Condensed",sans-serif;line-height:1}
 .mark-text b{display:block;font-size:1.45rem;font-weight:700;color:var(--ice);letter-spacing:.04em}
 .mark-text small{display:block;font-size:.72rem;color:#A9B7C4;letter-spacing:.14em;margin-top:.2rem}
 @media (max-width:420px){.mark-text small{display:none}}
 .topnav a[aria-current="page"]{color:var(--gold-lt)}
 .topbar .btn-live{margin:0 0 0 .4rem;padding:.5rem 1.1rem;font-size:1.05rem;letter-spacing:.06em;text-transform:uppercase}
-@media (max-width:780px){
+@media (max-width:1200px){
   .topbar .btn-live{margin-left:auto}
   .navtoggle{margin-left:.5rem}
-  .topnav{top:72px}
+  .topnav{top:4.5rem}
 }
 
 .pagehead{position:relative;padding:clamp(3rem,8vw,5rem) 0 clamp(1.5rem,4vw,2.5rem);border-top:none;
@@ -398,7 +402,7 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
 .pagehead + section{border-top:none;padding-top:1rem}
 
 /* buttons: shared sizes for the new layouts */
-.btn-lg{min-height:48px;display:inline-flex;align-items:center;justify-content:center;margin-top:0;
+.btn-lg{min-height:3rem;display:inline-flex;align-items:center;justify-content:center;margin-top:0;
   text-transform:uppercase;letter-spacing:.06em;font-size:1.15rem;padding:.65rem 1.5rem}
 .btn-row{display:flex;flex-wrap:wrap;gap:.75rem}
 .btn-ghost.on-photo{color:var(--ice);border-color:var(--gold)}
@@ -408,7 +412,7 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
    HOME
    ============================================================ */
 .home section{border-top:none}
-.h-hero{position:relative;min-height:min(84vh,680px);display:flex;align-items:flex-end;overflow:hidden;padding:0}
+.h-hero{position:relative;min-height:min(84vh,42rem);display:flex;align-items:flex-end;overflow:hidden;padding:0}
 .h-hero > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%}
 .h-hero::after{content:"";position:absolute;inset:0;
   background:linear-gradient(180deg, rgba(8,23,43,.35) 0%, rgba(8,23,43,.55) 45%, rgba(8,23,43,.97) 100%)}
@@ -427,7 +431,7 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
 .ng-vs span{color:#A9B7C4;font-weight:500}
 .ng-where{color:#A9B7C4;margin-top:.5rem;font-size:1rem}
 .ng-card .btn-row{margin-top:1.3rem}
-.ng-card .btn-lg{font-size:1rem;min-height:44px;padding:.5rem 1.1rem}
+.ng-card .btn-lg{font-size:1rem;min-height:2.75rem;padding:.5rem 1.1rem}
 .ng-then{margin-top:1.3rem;padding-top:1.1rem;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:1rem;font-size:1rem}
 .ng-then span:first-child{color:#A9B7C4}
 
@@ -439,7 +443,7 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
 .rec .streak{font-size:.9rem;color:var(--gold-lt);margin-top:.25rem}
 .lastn{flex:1 1 560px;min-width:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.2rem}
 .res{display:flex;gap:.85rem;align-items:center;min-width:0}
-.res .chip{width:44px;height:44px;flex:none;display:grid;place-items:center;font-family:"Barlow Condensed",sans-serif;font-size:1.4rem;font-weight:700}
+.res .chip{width:2.75rem;height:2.75rem;flex:none;display:grid;place-items:center;font-family:"Barlow Condensed",sans-serif;font-size:1.4rem;font-weight:700}
 .res .chip.w{background:var(--gold);color:var(--navy-900)}
 .res .chip.l{background:var(--navy-600);color:#C3CFDA}
 .res b{display:block;font-family:"Barlow Condensed",sans-serif;font-size:1.35rem;font-weight:600;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -468,7 +472,7 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
 @media (max-width:900px){.h-two{grid-template-columns:1fr}}
 .upc{margin-top:1.5rem;border-top:1px solid var(--line)}
 .upc-row{display:flex;align-items:center;gap:1.25rem;padding:1rem 0;border-bottom:1px solid var(--line)}
-.upc-date{width:64px;flex:none;text-align:center;font-family:"Barlow Condensed",sans-serif;line-height:1}
+.upc-date{width:4rem;flex:none;text-align:center;font-family:"Barlow Condensed",sans-serif;line-height:1}
 .upc-date small{display:block;font-size:.85rem;color:#A9B7C4;letter-spacing:.12em}
 .upc-date b{font-size:2.2rem;font-weight:700}
 .upc-mid{flex:1 1 auto;min-width:0}
@@ -526,7 +530,66 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
   .topbar .btn-live{padding:.45rem .8rem;font-size:.95rem}
   .h-hero .btn-row .btn{flex:1 1 auto}
 }
-@media (max-width:780px){
+@media (max-width:1200px){
   .topbar .btn-live{order:1;margin-left:auto}
   .navtoggle{order:2;margin-left:.5rem}
 }
+
+/* rotating hero headline: fixed two-line box so the page doesn't jump */
+#hero-say{min-height:1.84em;transition:opacity .45s ease, transform .45s ease}
+#hero-say.out{opacity:0;transform:translateY(.15em)}
+.h-hero .lead a{color:#fff;border-bottom:1px solid rgba(232,193,90,.6)}
+.h-hero .lead a:hover{color:var(--gold-lt);text-decoration:none}
+
+/* ---------- schedule, with more color ---------- */
+.s-sum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:2rem}
+.s-sum div{background:var(--navy-800);padding:.9rem 1.1rem}
+.s-sum small{display:block;font-family:"Barlow Condensed",sans-serif;font-size:.85rem;letter-spacing:.14em;text-transform:uppercase;color:#A9B7C4}
+.s-sum b{font-family:"Barlow Condensed",sans-serif;font-size:1.9rem;font-weight:700;line-height:1.1}
+.s-sum .s-streak.w{background:var(--gold)}
+.s-sum .s-streak.w small,.s-sum .s-streak.w b{color:var(--navy-900)}
+.s-sum .s-streak b{font-size:1.45rem}
+@media (max-width:620px){.s-sum{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.g-month{font-family:"Barlow Condensed",sans-serif;font-size:1.05rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold-lt);padding:1.6rem 0 .55rem;border-bottom:2px solid var(--gold)}
+.ledger{border-top:none}
+.game{padding-left:.9rem;padding-right:.9rem;margin:0}
+.game.is-home{background:linear-gradient(90deg, rgba(200,162,51,.10), rgba(200,162,51,0) 70%)}
+.game.is-away{background:rgba(27,61,102,.18)}
+.game.is-home .g-date{color:var(--gold-lt)}
+.game.is-away .g-date{color:#9FB6CF}
+.game.is-l .g-opp,.game.is-l .g-loc{opacity:.75}
+.g-at{color:#A9B7C4;font-weight:500;font-size:.8em}
+.g-right{display:flex;align-items:center;justify-content:flex-end;gap:.6rem}
+.g-chip{display:inline-grid;place-items:center;width:2.1rem;height:2.1rem;font-weight:700;font-size:1.15rem}
+.g-chip.w{background:var(--gold);color:var(--navy-900)}
+.g-chip.l{background:var(--navy-600);color:#C3CFDA}
+.g-score{font-size:1.45rem;font-weight:600}
+.game.is-w .g-score{color:var(--gold-lt)}
+.game.is-l .g-score{color:#A9B7C4}
+.g-watch{font-family:"Barlow",sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  border:1px solid var(--gold);color:var(--gold-lt);padding:.3rem .6rem}
+.g-watch:hover{background:var(--gold);color:var(--navy-900);text-decoration:none}
+.game.is-next{background:linear-gradient(90deg, rgba(200,162,51,.28), rgba(200,162,51,.06) 80%);box-shadow:inset 4px 0 0 var(--gold-lt)}
+.game.is-next .g-opp{font-size:1.75rem}
+.game.marquee{margin-left:0;padding-left:.9rem}
+@media (max-width:620px){
+  .g-right{justify-content:flex-start}
+  .game.marquee{margin-left:0;padding-left:.9rem}
+}
+
+/* ---------- the rink ---------- */
+.rink-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(1.75rem,4vw,3rem);align-items:start}
+.rink-grid img{width:100%;aspect-ratio:4/3;object-fit:cover;border:1px solid var(--line)}
+.rink-grid h2{font-size:clamp(2rem,4.5vw,2.6rem);text-transform:uppercase}
+.rink-grid .lede{margin:.9rem 0 0}
+.rink-grid .lede a{border-bottom:1px solid rgba(232,193,90,.4)}
+@media (max-width:820px){.rink-grid{grid-template-columns:1fr}}
+
+.topnav a,.mark-text b,.mark-text small{white-space:nowrap}
+.topnav{gap:1.2rem}
+
+/* mid-width laptops: logo only, so the full menu fits */
+@media (min-width:1201px) and (max-width:1360px){.mark-text{display:none}}
+.mark{flex:none}
