@@ -640,3 +640,51 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
   .player.no-photo .p-num{font-size:3.6rem}
 }
 @media (prefers-reduced-motion:reduce){.player,.player:hover{transition:none;transform:none}}
+
+/* ============================================================
+   HOME — upcoming games as baseball cards (matches .player cards)
+   ============================================================ */
+.gcards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.6rem;margin-top:1.75rem}
+@media (max-width:1000px){.gcards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.gcards{grid-template-columns:1fr}}
+.gcard{
+  display:flex;flex-direction:column;color:var(--ice);
+  background:linear-gradient(180deg,#14335A 0%,#0E2440 100%);
+  border:1px solid rgba(232,193,90,.45);padding:.6rem;
+  box-shadow:0 10px 24px rgba(0,0,0,.35);
+  transition:transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.gcard:hover{transform:translateY(-4px);border-color:var(--gold-lt);box-shadow:0 16px 32px rgba(0,0,0,.45);text-decoration:none}
+.gc-win{
+  position:relative;aspect-ratio:16/10;overflow:hidden;display:grid;place-items:center;
+  border:1px solid rgba(195,212,224,.25);
+  background:radial-gradient(90% 80% at 50% 40%, rgba(200,162,51,.18), rgba(8,23,43,0) 70%), var(--navy-900);
+}
+.gcard.away .gc-win{background:radial-gradient(90% 80% at 50% 40%, rgba(120,160,205,.18), rgba(8,23,43,0) 70%), var(--navy-900)}
+.gc-win img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.gcard.marquee .gc-win img{opacity:.3;filter:saturate(.8)}
+.gc-date{position:relative;text-align:center;font-family:"Barlow Condensed",sans-serif;line-height:1}
+.gc-date b{display:block;font-size:4.6rem;font-weight:700;color:var(--gold-lt);text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.gcard.away .gc-date b{color:#DCE4EB}
+.gc-date small{display:block;font-size:1rem;letter-spacing:.2em;text-transform:uppercase;color:#C3CFDA}
+.gc-badge{
+  position:absolute;top:.55rem;left:.55rem;z-index:1;
+  font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:.95rem;letter-spacing:.1em;
+  padding:.25rem .55rem;background:var(--gold);color:var(--navy-900);box-shadow:0 2px 6px rgba(0,0,0,.35)
+}
+.gcard.away .gc-badge{background:#DCE4EB}
+.gc-ribbon{
+  position:absolute;top:.55rem;right:.55rem;z-index:1;
+  font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:.9rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:.25rem .55rem;border:1px solid var(--gold-lt);color:var(--gold-lt);background:rgba(8,23,43,.7)
+}
+.gc-plate{border-top:3px solid var(--gold);margin-top:.55rem;padding:.75rem .3rem .3rem;text-align:center;display:flex;flex-direction:column;flex:1}
+.gc-tag{font-family:"Barlow Condensed",sans-serif;font-size:.95rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-lt);font-weight:600}
+.gc-plate h3{font-size:1.65rem;font-weight:700;text-transform:uppercase;line-height:1.05;margin-top:.15rem}
+.gc-time{font-family:"Barlow Condensed",sans-serif;font-size:1.15rem;letter-spacing:.06em;color:var(--gold-lt);margin-top:.3rem;text-transform:uppercase}
+.gc-loc{font-size:.88rem;color:#A9B7C4;margin-top:.15rem}
+.gc-links{display:flex;justify-content:center;gap:1rem;margin-top:auto;padding-top:.8rem;font-size:.85rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.gcard.photos .gc-win{aspect-ratio:16/10}
+.gcard.photos .gc-plate{justify-content:center}
+.gcard.photos:hover h3{color:var(--gold-lt)}
+@media (prefers-reduced-motion:reduce){.gcard,.gcard:hover{transition:none;transform:none}}
