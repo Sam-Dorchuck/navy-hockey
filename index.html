@@ -641,7 +641,7 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
           <li><a href="https://www.instagram.com/navymenshockey/">@navymenshockey — Men's D1</a></li>
           <li><a href="https://www.instagram.com/usnahockey/">@usnahockey — Men's D3</a></li>
           <li><a href="https://www.instagram.com/navywomenshockey/">@navywomenshockey — Women's D2</a></li>
-          <li><a href="https://www.youtube.com/channel/UCepE3NuI5iJhDDKrepIc34A">YouTube — game streams</a></li>
+          <li><a href="https://www.youtube.com/@navyicehockey5717/streams">YouTube — game streams</a></li>
           <li><a href="FACEBOOK_URL_HERE">Facebook</a></li>
         </ul>
       </div>
@@ -822,7 +822,7 @@ const GALLERY = [
   {src:"img/gallery/beef_mac_step_bros.jpg", cap:""},
   {src:"img/gallery/mac_beef.jpg", cap:""},
   {src:"img/gallery/murphy_breaks_stick.jpg", cap:""},
-  {src:"img/gallery/youngsters.jpg", cap:""},
+  {src:"img/gallery/youngters.jpg", cap:""},
   {src:"img/gallery/mager_flag.jpg", cap:""},
 
 
@@ -856,20 +856,20 @@ const GALLERY = [
            "soon"     -> "Coming soon"
    Remove the status line when an item is orderable again. */
 const MERCH = [
-  {name:"Full-Zip Sweatshirt",      price:"$55", photo:"img/merch/full-zip.png"},
-  {name:"UA Lightweight Hoodie",    price:"$50", photo:"img/merch/ua-lightweight-hoodie.png"},
-  {name:"UA Quarter-Zip",           price:"$50", photo:"img/merch/ua-quarter-zip.png.png"},
-  {name:"Champion Crewneck",        price:"$40", photo:"img/merch/champion-crewneck.png.png"},
-  {name:"UA Long Sleeve T-Shirt",   price:"$35", photo:"img/merch/ua-long-sleeve.png"},
+  {name:"Full-Zip Sweatshirt",      price:"$55", photo:"img/merch/full-zip.jpg"},
+  {name:"UA Lightweight Hoodie",    price:"$50", photo:"img/merch/ua-lightweight-hoodie.jpg"},
+  {name:"UA Quarter-Zip",           price:"$50", photo:"img/merch/ua-quarter-zip.jpg"},
+  {name:"Champion Crewneck",        price:"$40", photo:"img/merch/champion-crewneck.jpg"},
+  {name:"UA Long Sleeve T-Shirt",   price:"$35", photo:"img/merch/ua-long-sleeve.jpg"},
   {name:"UA Short Sleeve T-Shirt",  price:"$30", photo:"img/merch/ua-short-sleeve.jpg"},
   {name:"Blanket",                  price:"$75", photo:"img/merch/blanket.jpg"},
-  {name:"Trucker Hat",              price:"$25", photo:"img/merch/trucker-hat.png.png"},
-  {name:"Classic Hat",              price:"$25", photo:"img/merch/classic-hat.png.png"},
-  {name:"Beanie",                   price:"$25", photo:"img/merch/beanie.png.png"},
-  {name:"Mittens",                  price:"$20", photo:"img/merch/mittens.png.png"},
+  {name:"Trucker Hat",              price:"$25", photo:"img/merch/trucker-hat.jpg"},
+  {name:"Classic Hat",              price:"$25", photo:"img/merch/classic-hat.jpg"},
+  {name:"Beanie",                   price:"$25", photo:"img/merch/beanie.jpg"},
+  {name:"Mittens",                  price:"$20", photo:"img/merch/mittens.jpg"},
   /* price not set yet — the tile and item page simply omit it until you add one */
-  {name:"White Jersey",                          photo:"img/merch/white-jersey.png.png"},
-  {name:"Replica Jersey",                        photo:"img/merch/replica-jersey.png",
+  {name:"White Jersey",                          photo:"img/merch/white-jersey.jpg"},
+  {name:"Replica Jersey",                        photo:"img/merch/replica-jersey.jpg",
    sizes:"Youth and adult sizes",
    desc:"The script-crest replica, in both youth and adult sizes. Lighter material "
         + "than a game sweater \u2014 cut for wearing in the stands rather than on the ice."}
@@ -961,7 +961,7 @@ function orderLink(subject){
     : "mailto:" + ORDER_EMAIL + "?subject=" + encodeURIComponent(subject);
 }
 
-const LIVESTREAM = "https://www.youtube.com/channel/UCepE3NuI5iJhDDKrepIc34A";
+const LIVESTREAM = "https://www.youtube.com/@navyicehockey5717/streams";
 const PREGAME_HOURS = 4;    // stream link goes live this long before faceoff
 const GAME_HOURS    = 3;    // a game is considered over this long after faceoff
 
@@ -1033,6 +1033,7 @@ function renderRoster(teamId){
     card.href = "#player-" + slugify(p.name);
     card.setAttribute("aria-label", `${p.name}, number ${p.num}`);
     const img = el("img");
+    img.loading = "lazy"; img.decoding = "async";
     img.src = p.photo || "";
     img.alt = `${p.name}, #${p.num}`;
     img.loading = "lazy";
@@ -1069,16 +1070,11 @@ function renderRoster(teamId){
 (function renderGallery(){
   const mount = document.getElementById("gallery");
 
-  const load = g => new Promise(res=>{
-    const im = new Image();
-    im.onload  = ()=>res(g);
-    im.onerror = ()=>res(null);
-    im.src = g.src;
-  });
-
-  Promise.all(GALLERY.map(load)).then(results=>{
-    const shots = results.filter(Boolean);
-
+  /* Render right away and fetch slides on demand — waiting on every
+     full photo before showing anything made the section sit blank. */
+  const thumb = src => src.replace("img/gallery/", "img/gallery/thumbs/");
+  const shots = GALLERY.slice();
+  {
     if(!shots.length){
       mount.className = "gallery-empty";
       mount.innerHTML = "<h3>Photos coming soon</h3>" +
@@ -1089,13 +1085,13 @@ function renderRoster(teamId){
     mount.className = "carousel";
     mount.innerHTML =
       '<div class="stage">' +
-        shots.map((g,i)=>`<img src="${g.src}" alt="${g.cap || "Navy Hockey"}" class="${i?"":"on"}">`).join("") +
+        shots.map((g,i)=>`<img ${i?"data-src":"src"}="${g.src}" alt="${g.cap || "Navy Hockey"}" decoding="async" class="${i?"":"on"}">`).join("") +
         '<div class="cap"><div class="cap-text"></div><div class="cap-count"></div></div>' +
         '<button class="arrow prev" aria-label="Previous photo">&#10094;</button>' +
         '<button class="arrow next" aria-label="Next photo">&#10095;</button>' +
       '</div>' +
       '<div class="thumbs">' +
-        shots.map((g,i)=>`<button aria-label="Photo ${i+1}"><img src="${g.src}" alt=""></button>`).join("") +
+        shots.map((g,i)=>`<button aria-label="Photo ${i+1}"><img src="${thumb(g.src)}" loading="lazy" decoding="async" alt="" onerror="if(this.src.indexOf('/thumbs/')>-1)this.src='${g.src}'"></button>`).join("") +
       '</div>';
 
     const imgs   = [...mount.querySelectorAll(".stage img")];
@@ -1106,6 +1102,10 @@ function renderRoster(teamId){
 
     function show(n){
       i = (n + shots.length) % shots.length;
+      [i, (i+1) % shots.length].forEach(k=>{
+        const im = imgs[k];
+        if(im && im.dataset.src){ im.src = im.dataset.src; delete im.dataset.src; }
+      });
       imgs.forEach((im,k)=>im.classList.toggle("on", k===i));
       thumbs.forEach((t,k)=>t.setAttribute("aria-current", k===i ? "true" : "false"));
       text.textContent  = shots[i].cap || "";
@@ -1146,7 +1146,7 @@ function renderRoster(teamId){
     mount.addEventListener("focusout", start);
 
     show(0); start();
-  });
+  }
 })();
 
 const STATUS = {
@@ -1178,6 +1178,7 @@ const STATUS = {
     card.href = "#item-" + slugify(m.name);
     const shot = el("div","shot");
     const img  = el("img");
+    img.loading = "lazy"; img.decoding = "async";
     img.src = m.photo || "";
     img.alt = m.name;
     img.loading = "lazy";
@@ -1265,6 +1266,7 @@ function slugify(s){
     const left = el("div");
     const shot = el("div","sheet-shot portrait");
     const img = el("img");
+    img.loading = "lazy"; img.decoding = "async";
     img.src = p.photo || ""; img.alt = p.name;
     img.addEventListener("error", ()=>shot.classList.add("empty"));
     if(!p.photo) shot.classList.add("empty");
@@ -1305,6 +1307,7 @@ function slugify(s){
     const left = el("div");
     const shot = el("div","sheet-shot square");
     const img = el("img");
+    img.loading = "lazy"; img.decoding = "async";
     img.src = m.photo || ""; img.alt = m.name;
     img.addEventListener("error", ()=>shot.classList.add("empty"));
     if(!m.photo) shot.classList.add("empty");

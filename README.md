@@ -9,12 +9,14 @@ file and re-upload it.
 ```
 index.html        the entire site
 prep-photos.py    batch photo processor (run it, don't edit it)
+notify-orders.gs  emails Sammy + Kelly on every merch order (setup steps in the file)
 img/
   navy-n-star.png the logo (also embedded in index.html)
   raw/roster/     ORIGINAL headshots — archive, do not upload to the host
   raw/gallery/    ORIGINAL action photos — archive, do not upload
   roster/         processed headshots (generated)
-  gallery/        processed action photos (generated)
+  gallery/        processed action photos (generated, <=1920px)
+  gallery/thumbs/ small copies for the slideshow strip (same filenames)
 ```
 
 ## Adding photos
@@ -96,3 +98,11 @@ This site should outlive whoever built it. When you turn it over, hand off:
 this README, the domain registrar login, the host login, and the raw photo
 archive. The next person needs to be able to edit one file and re-upload it —
 that is the whole job.
+
+## Keep photos web-sized (this is what made the site slow)
+
+Never drop camera originals straight into `img/gallery/`, `img/roster/` or
+`img/merch/`. A single phone/DSLR photo is 10-25 MB; the site once shipped
+~317 MB of them. Originals go in `img/raw/`, then run `prep-photos.py`.
+Rule of thumb: nothing outside `img/raw/` should be over ~500 KB. Every
+gallery photo also needs a copy in `img/gallery/thumbs/` (~360px).
