@@ -120,3 +120,9 @@ Never drop camera originals straight into `img/gallery/`, `img/roster/` or
 ~317 MB of them. Originals go in `img/raw/`, then run `prep-photos.py`.
 Rule of thumb: nothing outside `img/raw/` should be over ~500 KB. Every
 gallery photo also needs a copy in `img/gallery/thumbs/` (~360px).
+
+## Headshots go in `img/roster/`
+
+The site only reads headshots from `img/roster/<lastname>.jpg` (the `photo:`
+path in `js/data.js`). The old `players/` folder is not used by the site —
+a photo dropped there won't show up. Best size: portrait, at least 600×800.
