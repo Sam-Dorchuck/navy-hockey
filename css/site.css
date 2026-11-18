@@ -593,3 +593,50 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
 /* mid-width laptops: logo only, so the full menu fits */
 @media (min-width:1201px) and (max-width:1360px){.mark-text{display:none}}
 .mark{flex:none}
+
+/* ============================================================
+   ROSTER — baseball-card tiles (home wall + Roster page)
+   Photo in a framed window, name plate underneath, number badge.
+   ============================================================ */
+.wall{gap:1.6rem;background:none;border:none;grid-template-columns:repeat(auto-fill,minmax(13rem,1fr))}
+.player{
+  aspect-ratio:auto;overflow:visible;display:flex;flex-direction:column;
+  background:linear-gradient(180deg,#14335A 0%,#0E2440 100%);
+  border:1px solid rgba(232,193,90,.45);padding:.6rem;
+  box-shadow:0 10px 24px rgba(0,0,0,.35);
+  transition:transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.player:hover{transform:translateY(-4px);border-color:var(--gold-lt);box-shadow:0 16px 32px rgba(0,0,0,.45)}
+.player::after{display:none}
+.player img{height:auto;aspect-ratio:3/4;border:1px solid rgba(195,212,224,.25);filter:none;background:var(--navy-900)}
+.player.no-photo::before{
+  content:"";display:block;aspect-ratio:3/4;border:1px solid rgba(195,212,224,.25);
+  background:radial-gradient(90% 70% at 50% 35%, rgba(200,162,51,.14), rgba(8,23,43,0) 70%), var(--navy-900);
+}
+/* number badge, top-left corner of the photo */
+.p-num{
+  top:1rem;left:1rem;z-index:2;font-size:1.45rem;line-height:1;color:var(--navy-900);
+  background:var(--gold);padding:.3rem .5rem;min-width:2.3rem;text-align:center;
+  box-shadow:0 2px 6px rgba(0,0,0,.35);
+}
+.player.no-photo .p-num{
+  top:auto;left:50%;transform:translateX(-50%);
+  bottom:calc(5.2rem + 30%);font-size:5rem;padding:0;background:none;box-shadow:none;color:rgba(200,162,51,.6)
+}
+.p-letter{top:1rem;right:1rem}
+/* name plate */
+.p-info{
+  position:static;background:none;padding:.75rem .2rem .2rem;margin-top:.55rem;
+  border-top:3px solid var(--gold);text-align:center;
+}
+.p-name{font-size:1.4rem;font-weight:700;text-transform:uppercase;letter-spacing:.02em}
+.p-meta{font-family:"Barlow Condensed",sans-serif;font-size:1rem;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-lt);margin-top:.2rem}
+.p-home{font-size:.85rem;color:#A9B7C4;margin-top:.1rem}
+.p-stats{text-align:center}
+@media (max-width:620px){
+  .wall{grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+  .player{padding:.45rem}
+  .p-name{font-size:1.15rem}
+  .player.no-photo .p-num{font-size:3.6rem}
+}
+@media (prefers-reduced-motion:reduce){.player,.player:hover{transition:none;transform:none}}
