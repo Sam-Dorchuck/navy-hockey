@@ -16,7 +16,7 @@
 <!--
   HOMEPAGE. Almost everything here fills itself in from js/data.js:
   next game, record, last four results, Army–Navy countdown (any game with
-  marquee:true), upcoming home games, the full D1 roster, four store items,
+  marquee:true), the next five games as cards, the full D1 roster, four store items,
   and the rotating headline (HERO_SAYINGS).
   The only hand-set things are the three photos and the intro line.
 -->
@@ -64,7 +64,7 @@
       <div class="grid">
         <img src="img/gallery/mager_flag.jpg" alt="A Navy player holding the Don't Tread On Me flag" loading="lazy">
         <div>
-          <div class="kicker">Rivalry weekend</div>
+          <div class="kicker">America&#39;s Hockey Game</div>
           <h2 id="rv-title">Army–Navy</h2>
           <div class="when" id="rv-when"></div>
           <div class="countdown" id="cd" aria-live="off"></div>
@@ -77,25 +77,14 @@
     </div>
   </section>
 
-  <!-- upcoming home games + photos -->
+  <!-- upcoming games as baseball cards (+ a photos card) -->
   <section class="h-block">
     <div class="shell">
-      <div class="h-two">
-        <div>
-          <div class="h-head">
-            <h2>Coming up at McMullen</h2>
-            <a class="more" href="schedule.html">Full schedule →</a>
-          </div>
-          <div class="upc" id="upc"></div>
-        </div>
-        <a class="photo-card" href="photos.html">
-          <img src="img/gallery/beef_scoring.jpg" alt="A Navy forward scores past a diving goalie" loading="lazy">
-          <div class="ov">
-            <div class="kicker">Photos</div>
-            <b>The season so far →</b>
-          </div>
-        </a>
+      <div class="h-head">
+        <h2>Coming up</h2>
+        <a class="more" href="schedule.html">Full schedule →</a>
       </div>
+      <div class="gcards" id="gcards"></div>
     </div>
   </section>
 

@@ -17,7 +17,10 @@ const TEAMS = [
    stream: optional livestream link for that game (e.g. the home team's
            channel for an away game). Home games default to our LIVESTREAM;
            away games without one show no Watch link.
-   marquee:true + tag:"…": rivalry treatment + homepage countdown. */
+   marquee:true + tag:"…": rivalry treatment + homepage countdown.
+   photo: optional picture for that game's homepage card, e.g.
+          photo:"img/gallery/cards/fish_shooting.jpg". Without one, each game
+          gets one of CARD_PHOTOS below (same photo every visit). */
 const SCHEDULE = {
   /* 2026-27 season. Add result:{w:true, score:"4-2"} to a game once played
      and the row switches from a start time to a W/L line automatically. */
@@ -273,4 +276,20 @@ const HERO_SAYINGS = [
   "Semper Fidelis.",
   "The Frozen Chosen.",
   "Damn the torpedoes."
+];
+
+/* Action shots used on the homepage "Coming up" cards (card-sized copies in
+   img/gallery/cards/). Each game is matched to one by its date, so a game keeps
+   the same photo every visit. Marquee games (Army–Navy) use the flag photo. */
+const CARD_PHOTOS = [
+  "img/gallery/cards/renby_big_hit.jpg",
+  "img/gallery/cards/cheese_action_2.jpg",
+  "img/gallery/cards/fish_shooting.jpg",
+  "img/gallery/cards/2024-09-20-nmih-vs-umd-34-x2-large.jpg",
+  "img/gallery/cards/2024-09-20-nmih-vs-umd-8-x2-large.jpg",
+  "img/gallery/cards/2024-09-20-nmih-vs-umd-9-x2-large.jpg",
+  "img/gallery/cards/2024-09-27-nmih-vs-uri-35-x2-large.jpg",
+  "img/gallery/cards/2024-09-27-nmih-vs-uri-68-x2-large.jpg",
+  "img/gallery/cards/2024-11-02-nmih-temple-7-x2-large.jpg",
+  "img/gallery/cards/2024-09-20-nmih-vs-umd-73-x2-large.jpg"
 ];

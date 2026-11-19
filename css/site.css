@@ -593,3 +593,127 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
 /* mid-width laptops: logo only, so the full menu fits */
 @media (min-width:1201px) and (max-width:1360px){.mark-text{display:none}}
 .mark{flex:none}
+
+/* ============================================================
+   ROSTER — baseball-card tiles (home wall + Roster page)
+   Photo in a framed window, name plate underneath, number badge.
+   ============================================================ */
+.wall{gap:1.6rem;background:none;border:none;grid-template-columns:repeat(auto-fill,minmax(13rem,1fr))}
+.player{
+  aspect-ratio:auto;overflow:visible;display:flex;flex-direction:column;
+  background:linear-gradient(180deg,#14335A 0%,#0E2440 100%);
+  border:1px solid rgba(232,193,90,.45);padding:.6rem;
+  box-shadow:0 10px 24px rgba(0,0,0,.35);
+  transition:transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.player:hover{transform:translateY(-4px);border-color:var(--gold-lt);box-shadow:0 16px 32px rgba(0,0,0,.45)}
+.player::after{display:none}
+.player img{height:auto;aspect-ratio:3/4;border:1px solid rgba(195,212,224,.25);filter:none;background:var(--navy-900)}
+.player.no-photo::before{
+  content:"";display:block;aspect-ratio:3/4;border:1px solid rgba(195,212,224,.25);
+  background:radial-gradient(90% 70% at 50% 35%, rgba(200,162,51,.14), rgba(8,23,43,0) 70%), var(--navy-900);
+}
+/* number badge, top-left corner of the photo */
+.p-num{
+  top:1rem;left:1rem;z-index:2;font-size:1.45rem;line-height:1;color:var(--navy-900);
+  background:var(--gold);padding:.3rem .5rem;min-width:2.3rem;text-align:center;
+  box-shadow:0 2px 6px rgba(0,0,0,.35);
+}
+.player.no-photo .p-num{
+  top:auto;left:50%;transform:translateX(-50%);
+  bottom:calc(5.2rem + 30%);font-size:5rem;padding:0;background:none;box-shadow:none;color:rgba(200,162,51,.6)
+}
+.p-letter{top:1rem;right:1rem}
+/* name plate */
+.p-info{
+  position:static;background:none;padding:.75rem .2rem .2rem;margin-top:.55rem;
+  border-top:3px solid var(--gold);text-align:center;
+}
+.p-name{font-size:1.4rem;font-weight:700;text-transform:uppercase;letter-spacing:.02em}
+.p-meta{font-family:"Barlow Condensed",sans-serif;font-size:1rem;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-lt);margin-top:.2rem}
+.p-home{font-size:.85rem;color:#A9B7C4;margin-top:.1rem}
+.p-stats{text-align:center}
+@media (max-width:620px){
+  .wall{grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+  .player{padding:.45rem}
+  .p-name{font-size:1.15rem}
+  .player.no-photo .p-num{font-size:3.6rem}
+}
+@media (prefers-reduced-motion:reduce){.player,.player:hover{transition:none;transform:none}}
+
+/* ============================================================
+   HOME — upcoming games as baseball cards (matches .player cards)
+   ============================================================ */
+.gcards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.6rem;margin-top:1.75rem}
+@media (max-width:1000px){.gcards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.gcards{grid-template-columns:1fr}}
+.gcard{
+  display:flex;flex-direction:column;color:var(--ice);
+  background:linear-gradient(180deg,#14335A 0%,#0E2440 100%);
+  border:1px solid rgba(232,193,90,.45);padding:.6rem;
+  box-shadow:0 10px 24px rgba(0,0,0,.35);
+  transition:transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.gcard:hover{transform:translateY(-4px);border-color:var(--gold-lt);box-shadow:0 16px 32px rgba(0,0,0,.45);text-decoration:none}
+.gc-win{
+  position:relative;aspect-ratio:16/10;overflow:hidden;display:grid;place-items:center;
+  border:1px solid rgba(195,212,224,.25);
+  background:radial-gradient(90% 80% at 50% 40%, rgba(200,162,51,.18), rgba(8,23,43,0) 70%), var(--navy-900);
+}
+.gcard.away .gc-win{background:radial-gradient(90% 80% at 50% 40%, rgba(120,160,205,.18), rgba(8,23,43,0) 70%), var(--navy-900)}
+.gc-win img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.gcard.marquee .gc-win img{opacity:.3;filter:saturate(.8)}
+.gc-date{position:relative;text-align:center;font-family:"Barlow Condensed",sans-serif;line-height:1}
+.gc-date b{display:block;font-size:4.6rem;font-weight:700;color:var(--gold-lt);text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.gcard.away .gc-date b{color:#DCE4EB}
+.gc-date small{display:block;font-size:1rem;letter-spacing:.2em;text-transform:uppercase;color:#C3CFDA}
+.gc-badge{
+  position:absolute;top:.55rem;left:.55rem;z-index:1;
+  font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:.95rem;letter-spacing:.1em;
+  padding:.25rem .55rem;background:var(--gold);color:var(--navy-900);box-shadow:0 2px 6px rgba(0,0,0,.35)
+}
+.gcard.away .gc-badge{background:#DCE4EB}
+.gc-ribbon{
+  position:absolute;top:.55rem;right:.55rem;z-index:1;
+  font-family:"Barlow Condensed",sans-serif;font-weight:600;font-size:.9rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:.25rem .55rem;border:1px solid var(--gold-lt);color:var(--gold-lt);background:rgba(8,23,43,.7)
+}
+.gc-plate{border-top:3px solid var(--gold);margin-top:.55rem;padding:.75rem .3rem .3rem;text-align:center;display:flex;flex-direction:column;flex:1}
+.gc-tag{font-family:"Barlow Condensed",sans-serif;font-size:.95rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-lt);font-weight:600}
+.gc-plate h3{font-size:1.65rem;font-weight:700;text-transform:uppercase;line-height:1.05;margin-top:.15rem}
+.gc-time{font-family:"Barlow Condensed",sans-serif;font-size:1.15rem;letter-spacing:.06em;color:var(--gold-lt);margin-top:.3rem;text-transform:uppercase}
+.gc-loc{font-size:.88rem;color:#A9B7C4;margin-top:.15rem}
+.gc-links{display:flex;justify-content:center;gap:1rem;margin-top:auto;padding-top:.8rem;font-size:.85rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.gcard.photos .gc-win{aspect-ratio:16/10}
+.gcard.photos .gc-plate{justify-content:center}
+.gcard.photos:hover h3{color:var(--gold-lt)}
+@media (prefers-reduced-motion:reduce){.gcard,.gcard:hover{transition:none;transform:none}}
+
+/* game cards v2: action photo, big date block + time pill on the photo */
+.gc-win{place-items:stretch;aspect-ratio:4/3}
+.gc-win img{filter:saturate(.95)}
+.gc-win::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg, rgba(8,23,43,.15) 0%, rgba(8,23,43,0) 35%, rgba(8,23,43,.25) 60%, rgba(8,23,43,.85) 100%)}
+.gcard.marquee .gc-win img{opacity:1;filter:none}
+.gc-badge{left:auto;right:.55rem;top:.55rem;z-index:2}
+.gc-date{
+  position:absolute;left:.75rem;bottom:.75rem;z-index:2;
+  background:var(--gold);color:var(--navy-900);text-align:center;
+  padding:.45rem .8rem .5rem;min-width:5.6rem;box-shadow:0 6px 16px rgba(0,0,0,.45)
+}
+.gc-date b{font-size:3.6rem;line-height:.9;color:var(--navy-900);text-shadow:none;letter-spacing:-.01em}
+.gcard.away .gc-date b{color:var(--navy-900)}
+.gc-date small{font-size:1.05rem;font-weight:700;letter-spacing:.14em;color:var(--navy-900)}
+.gcard.away .gc-date{background:#E9EEF3}
+.gc-clock{
+  position:absolute;right:.75rem;bottom:.85rem;z-index:2;
+  font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:2.2rem;line-height:1;letter-spacing:.02em;
+  color:#fff;background:rgba(8,23,43,.88);border:2px solid var(--gold);padding:.35rem .7rem;
+  box-shadow:0 6px 16px rgba(0,0,0,.45)
+}
+.gc-time{display:none}
+.gcard.first{border-color:var(--gold-lt);box-shadow:0 0 0 2px rgba(232,193,90,.35), 0 12px 28px rgba(0,0,0,.45)}
+.gc-plate h3{font-size:1.75rem}
+.gcard.photos .gc-win{aspect-ratio:4/3}
+.gcard.photos .gc-win::after{display:none}
+@media (max-width:560px){.gc-date b{font-size:3rem}.gc-clock{font-size:1.8rem}}

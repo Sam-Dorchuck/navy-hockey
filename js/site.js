@@ -687,18 +687,57 @@ function slugify(s){
     tick(); setInterval(tick, 30000);
   })();
 
-  /* upcoming home games */
+  /* the next five D1 games as baseball cards, then a photos card */
   (function upcoming(){
-    const box = document.getElementById("upc");
+    const box = document.getElementById("gcards");
     if(!box) return;
-    const list = D1.filter(g=>g.home && !isOver(g)).sort((a,b)=>faceoff(a)-faceoff(b)).slice(0,6);
-    if(!list.length){ box.innerHTML = `<p class="g-loc" style="padding:1rem 0">No more home games this season.</p>`; return; }
-    box.innerHTML = list.map(g=>{ const f = fmt(g.date); return `
-      <div class="upc-row">
-        <div class="upc-date"><small>${f.mon}</small><b>${String(f.day).padStart(2,"0")}</b></div>
-        <div class="upc-mid"><b>${esc(g.opp)}</b><small>${f.wd} · ${esc(g.loc)}</small></div>
-        <div class="upc-time">${esc(g.time||"TBD")}</div>
-      </div>`; }).join("");
+    const list = D1.filter(g=>!isOver(g)).sort((a,b)=>faceoff(a)-faceoff(b)).slice(0,5);
+    /* a photo per game: its own photo:, the flag for marquee games, else one of
+       CARD_PHOTOS picked from the date (stable), never repeating within the row */
+    const pool = (typeof CARD_PHOTOS!=="undefined" && CARD_PHOTOS.length) ? CARD_PHOTOS : [];
+    const used = new Set();
+    const photoFor = g=>{
+      if(g.photo) return g.photo;
+      if(g.marquee) return "img/gallery/cards/mager_flag.jpg";
+      if(!pool.length) return "";
+      let k = [...g.date].reduce((h,c)=>(h*31 + c.charCodeAt(0))>>>0, 7) % pool.length;
+      for(let n=0; n<pool.length && used.has(k); n++) k = (k+1) % pool.length;
+      used.add(k); return pool[k];
+    };
+    const card = (g,i)=>{
+      const f = fmt(g.date);
+      const live = isLive(g), st = streamFor(g), ph = photoFor(g);
+      const tags = [];
+      if(live) tags.push('Live now <span class="live-dot"></span>');
+      else if(i===0) tags.push("Next game");
+      if(g.tag) tags.push(esc(g.tag));
+      return `
+      <article class="gcard ${g.home?"home":"away"}${g.marquee?" marquee":""}${i===0?" first":""}">
+        <div class="gc-win">
+          ${ph ? `<img src="${ph}" alt="" loading="lazy" decoding="async">` : ""}
+          <span class="gc-badge">${g.home?"HOME":"AWAY"}</span>
+          <div class="gc-date"><small>${f.wd}</small><b>${f.day}</b><small>${f.mon}</small></div>
+          <div class="gc-clock">${esc(g.time||"TBD")}</div>
+        </div>
+        <div class="gc-plate">
+          ${tags.length ? `<div class="gc-tag">${tags.join(" · ")}</div>` : ""}
+          <h3>${g.home?"vs":"at"} ${esc(g.opp)}</h3>
+          <div class="gc-loc">${esc(g.loc)}</div>
+          <div class="gc-links">
+            ${live && st ? `<a href="${st}">Watch live</a>` : `<a href="${gcalLink(g, d1name)}">Add to calendar</a>`}
+            ${st && !live ? `<a href="${st}">Stream</a>` : `<a href="${mapsLink(g.loc)}">Directions</a>`}
+          </div>
+        </div>
+      </article>`;
+    };
+    const photos = `
+      <a class="gcard photos" href="photos.html">
+        <div class="gc-win"><img src="img/gallery/cards/beef_scoring.jpg" alt="A Navy forward scores past a diving goalie" loading="lazy"></div>
+        <div class="gc-plate"><div class="gc-tag">Photos</div><h3>The season so far →</h3></div>
+      </a>`;
+    box.innerHTML = list.length
+      ? list.map(card).join("") + photos
+      : `<p class="g-loc">The season's in the books — see the <a href="schedule.html">final results</a>.</p>` + photos;
   })();
 
   /* the whole D1 roster — same tiles as the Roster page; tiles open the player page */
