@@ -692,22 +692,36 @@ function slugify(s){
     const box = document.getElementById("gcards");
     if(!box) return;
     const list = D1.filter(g=>!isOver(g)).sort((a,b)=>faceoff(a)-faceoff(b)).slice(0,5);
+    /* a photo per game: its own photo:, the flag for marquee games, else one of
+       CARD_PHOTOS picked from the date (stable), never repeating within the row */
+    const pool = (typeof CARD_PHOTOS!=="undefined" && CARD_PHOTOS.length) ? CARD_PHOTOS : [];
+    const used = new Set();
+    const photoFor = g=>{
+      if(g.photo) return g.photo;
+      if(g.marquee) return "img/gallery/cards/mager_flag.jpg";
+      if(!pool.length) return "";
+      let k = [...g.date].reduce((h,c)=>(h*31 + c.charCodeAt(0))>>>0, 7) % pool.length;
+      for(let n=0; n<pool.length && used.has(k); n++) k = (k+1) % pool.length;
+      used.add(k); return pool[k];
+    };
     const card = (g,i)=>{
-      const f = fmt(g.date), when = faceoff(g);
-      const live = isLive(g), st = streamFor(g);
-      const ribbon = live ? 'Live now <span class="live-dot"></span>' : (i===0 ? "Next game" : "");
+      const f = fmt(g.date);
+      const live = isLive(g), st = streamFor(g), ph = photoFor(g);
+      const tags = [];
+      if(live) tags.push('Live now <span class="live-dot"></span>');
+      else if(i===0) tags.push("Next game");
+      if(g.tag) tags.push(esc(g.tag));
       return `
-      <article class="gcard ${g.home?"home":"away"}${g.marquee?" marquee":""}">
+      <article class="gcard ${g.home?"home":"away"}${g.marquee?" marquee":""}${i===0?" first":""}">
         <div class="gc-win">
-          ${g.marquee ? `<img src="img/gallery/mager_flag.jpg" alt="" loading="lazy">` : ""}
+          ${ph ? `<img src="${ph}" alt="" loading="lazy" decoding="async">` : ""}
           <span class="gc-badge">${g.home?"HOME":"AWAY"}</span>
-          ${ribbon ? `<span class="gc-ribbon">${ribbon}</span>` : ""}
-          <div class="gc-date"><small>${f.wd}</small><b>${String(f.day).padStart(2,"0")}</b><small>${f.mon}</small></div>
+          <div class="gc-date"><small>${f.wd}</small><b>${f.day}</b><small>${f.mon}</small></div>
+          <div class="gc-clock">${esc(g.time||"TBD")}</div>
         </div>
         <div class="gc-plate">
-          ${g.tag ? `<div class="gc-tag">${esc(g.tag)}</div>` : ""}
+          ${tags.length ? `<div class="gc-tag">${tags.join(" · ")}</div>` : ""}
           <h3>${g.home?"vs":"at"} ${esc(g.opp)}</h3>
-          <div class="gc-time">${esc(g.time||"TBD")}</div>
           <div class="gc-loc">${esc(g.loc)}</div>
           <div class="gc-links">
             ${live && st ? `<a href="${st}">Watch live</a>` : `<a href="${gcalLink(g, d1name)}">Add to calendar</a>`}
@@ -718,7 +732,7 @@ function slugify(s){
     };
     const photos = `
       <a class="gcard photos" href="photos.html">
-        <div class="gc-win"><img src="img/gallery/beef_scoring.jpg" alt="A Navy forward scores past a diving goalie" loading="lazy"></div>
+        <div class="gc-win"><img src="img/gallery/cards/beef_scoring.jpg" alt="A Navy forward scores past a diving goalie" loading="lazy"></div>
         <div class="gc-plate"><div class="gc-tag">Photos</div><h3>The season so far →</h3></div>
       </a>`;
     box.innerHTML = list.length

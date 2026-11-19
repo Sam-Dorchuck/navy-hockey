@@ -688,3 +688,32 @@ footer{background:#050F1D;padding:3rem 0;border-top:1px solid var(--line)}
 .gcard.photos .gc-plate{justify-content:center}
 .gcard.photos:hover h3{color:var(--gold-lt)}
 @media (prefers-reduced-motion:reduce){.gcard,.gcard:hover{transition:none;transform:none}}
+
+/* game cards v2: action photo, big date block + time pill on the photo */
+.gc-win{place-items:stretch;aspect-ratio:4/3}
+.gc-win img{filter:saturate(.95)}
+.gc-win::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg, rgba(8,23,43,.15) 0%, rgba(8,23,43,0) 35%, rgba(8,23,43,.25) 60%, rgba(8,23,43,.85) 100%)}
+.gcard.marquee .gc-win img{opacity:1;filter:none}
+.gc-badge{left:auto;right:.55rem;top:.55rem;z-index:2}
+.gc-date{
+  position:absolute;left:.75rem;bottom:.75rem;z-index:2;
+  background:var(--gold);color:var(--navy-900);text-align:center;
+  padding:.45rem .8rem .5rem;min-width:5.6rem;box-shadow:0 6px 16px rgba(0,0,0,.45)
+}
+.gc-date b{font-size:3.6rem;line-height:.9;color:var(--navy-900);text-shadow:none;letter-spacing:-.01em}
+.gcard.away .gc-date b{color:var(--navy-900)}
+.gc-date small{font-size:1.05rem;font-weight:700;letter-spacing:.14em;color:var(--navy-900)}
+.gcard.away .gc-date{background:#E9EEF3}
+.gc-clock{
+  position:absolute;right:.75rem;bottom:.85rem;z-index:2;
+  font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:2.2rem;line-height:1;letter-spacing:.02em;
+  color:#fff;background:rgba(8,23,43,.88);border:2px solid var(--gold);padding:.35rem .7rem;
+  box-shadow:0 6px 16px rgba(0,0,0,.45)
+}
+.gc-time{display:none}
+.gcard.first{border-color:var(--gold-lt);box-shadow:0 0 0 2px rgba(232,193,90,.35), 0 12px 28px rgba(0,0,0,.45)}
+.gc-plate h3{font-size:1.75rem}
+.gcard.photos .gc-win{aspect-ratio:4/3}
+.gcard.photos .gc-win::after{display:none}
+@media (max-width:560px){.gc-date b{font-size:3rem}.gc-clock{font-size:1.8rem}}
