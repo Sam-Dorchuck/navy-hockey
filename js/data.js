@@ -40,7 +40,7 @@ const SCHEDULE = {
     {date:"2026-11-07", opp:"Drexel", home:false, loc:"Class of 1923 Arena, Philadelphia, PA", time:"7:40 PM", result:{w:false, score:"0-5"}},
     {date:"2026-11-13", opp:"Villanova", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM", result:{w:true, score:"2-1"}},
     {date:"2026-11-14", opp:"Alabama", home:true, loc:"McMullen Arena, Annapolis", time:"5:30 PM", result:{w:true, score:"3-1"}},
-    {date:"2026-11-20", opp:"North Carolina", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM"},
+    {date:"2026-11-20", opp:"North Carolina", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM", result:{w:true, score:"3-0"}},
     {date:"2026-11-21", opp:"NC State", home:true, loc:"McMullen Arena, Annapolis", time:"5:30 PM"},
     {date:"2026-12-04", opp:"Temple", home:true, loc:"McMullen Arena, Annapolis", time:"7:00 PM"},
     {date:"2026-12-05", opp:"West Chester", home:true, loc:"McMullen Arena, Annapolis", time:"5:30 PM"},
